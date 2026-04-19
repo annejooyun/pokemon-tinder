@@ -36,7 +36,16 @@ function PokemonDisplay({ data, firstName}: { data: Pokemon }) {
   return (
     <div className="card-container">
       <h2 className="name">{name}</h2>
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      <br></br>
+      <div className="stats">
+        <h3>About:</h3>
+        <ul>
+          <li>Height: {data.height} dm</li>
+          <li>Weight: {data.weight} hg</li>
+          <li>Type(s): {data.types.join(', ')}</li>
+        </ul>
+      </div>
+      <br></br>
     </div>
   )
 }
@@ -46,6 +55,8 @@ function PokemonDisplay({ data, firstName}: { data: Pokemon }) {
 type Pokemon = {
     id: number;
     name: string;
+    height: number;
+    weight: number;
     types: string[];
     imageURL?: string;
 }
@@ -68,7 +79,12 @@ async function fetchSnorlax (): Promise<Pokemon | null> {
     return null;
     }
     const data = await response.json();
-    return {id: data["id"], name: data["name"], types: data["types"]};
+    return {
+      id: data["id"],
+      name: data["name"], 
+      height: data["height"],
+      weight: data["weight"],
+      types: data.types.map((t: any) => t.type.name) };
   }
   catch (error) {
     console.error(`Fetch Snorlax failed: ${error}`);
@@ -85,6 +101,7 @@ async function getPokemonByLocation({ location }: { location: string }) {
 
 async function fetchFirstName(gender: string): Promise<string | null> {
   try {
+    //Nationality could be changed later if wanted
     const response = await fetch(`https://randomuser.me/api/?gender=${gender}&nat=US`);
 
     if(!response.ok){
