@@ -39,13 +39,19 @@ function PokemonDisplay({ data, firstName}: { data: Pokemon }) {
       <br></br>
       <img src={data.imageURL}></img>
       <div className="stats">
-        <h3>About:</h3>
-        <ul>
-          <li>Height: {data.height} dm</li>
-          <li>Weight: {data.weight} hg</li>
-          <li>Type(s): {data.types.join(', ')}</li>
-          <li>Location(s): {data.locations.join(', ')}</li>
-        </ul>
+        <div className="row">
+
+        </div>
+        <div className="row">
+          <h3 className="about">About</h3>
+          <ul className="about-list">               
+            <li>Height: {data.height} dm</li>
+            <li>Weight: {data.weight} hg</li>
+            <li>Type(s): {data.types.join(', ')}</li>
+          </ul>
+          <h3 className="locations">Locations</h3>  
+          <p className="locations-list">{data.locations.join(', ')}</p>          
+        </div>
       </div>
       <br></br>
     </div>
