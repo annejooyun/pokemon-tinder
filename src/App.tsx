@@ -3,17 +3,19 @@ import './App.css'
 
 function App() {
   const [data, setData] = useState(null)
+  const [firstName, setFirstName] = useState(null)
   const [error, setError] = useState<string | null>(null)
+  const gender = "male";
 
 
 useEffect(() => {
-  fetchSnorlax().then(result => {
-    if (result) {
-      setData(result)
-    } else {
-      setError('Failed to fetch Pokemon')
-    }
-  })
+  Promise.all([
+    fetchSnorlax(),
+    fetchFirstName(gender)
+  ]).then(([pokemon, firstName]) => {
+    setData(pokemon)
+    setFirstName(firstName)
+  }).catch(() => setError('Failed to fetch'))
 }, [])
 
   return (
@@ -21,20 +23,19 @@ useEffect(() => {
     <h1>Pokemon Tinder</h1>
     {!data && !error && <p>Loading...</p>}
     {error && <p style={{ color: 'red' }}>{error}</p>}
-    {data && <PokemonDisplay data={data} />}
+    {data && <PokemonDisplay data={data} firstName={firstName} />}
   </div>
 )
-  
-  
 }
+
 
 export default App
 
-function PokemonDisplay({ data }: { data: Pokemon }) {
-
+function PokemonDisplay({ data, firstName}: { data: Pokemon }) {
+  const name = firstName + " the " + data.name;
   return (
     <div className="card-container">
-      <h2 className="name">{data.name}</h2>
+      <h2 className="name">{name}</h2>
       <pre>{JSON.stringify(data, null, 2)}</pre>
     </div>
   )
@@ -64,13 +65,13 @@ async function fetchSnorlax (): Promise<Pokemon | null> {
 
     if (!response.ok) {
     console.error(`Error: ${response.status}`);
-    return null
+    return null;
     }
     const data = await response.json();
     return {id: data["id"], name: data["name"], types: data["types"]};
   }
   catch (error) {
-    console.error(`Fetch failed: ${error}`);
+    console.error(`Fetch Snorlax failed: ${error}`);
     return null;
   }
 }
@@ -81,3 +82,22 @@ async function getPokemonByLocation({ location }: { location: string }) {
   return []
 }
   */
+
+async function fetchFirstName(gender: string): Promise<string | null> {
+  try {
+    const response = await fetch(`https://randomuser.me/api/?gender=${gender}&nat=US`);
+
+    if(!response.ok){
+      console.error(`Fetch failed: ${response.status}`);
+      return null;
+    }
+
+    const data = await response.json();
+    console.log(data);
+    return(data.results[0].name.first);
+  }
+  catch (error){
+    console.error(`Fetch first name failed: ${error}`);
+    return null;
+  }
+}
