@@ -37,12 +37,14 @@ function PokemonDisplay({ data, firstName}: { data: Pokemon }) {
     <div className="card-container">
       <h2 className="name">{name}</h2>
       <br></br>
+      <img src={data.imageURL}></img>
       <div className="stats">
         <h3>About:</h3>
         <ul>
           <li>Height: {data.height} dm</li>
           <li>Weight: {data.weight} hg</li>
           <li>Type(s): {data.types.join(', ')}</li>
+          <li>Location(s): {data.locations.join(', ')}</li>
         </ul>
       </div>
       <br></br>
@@ -58,6 +60,7 @@ type Pokemon = {
     height: number;
     weight: number;
     types: string[];
+    locations: string[];
     imageURL?: string;
 }
 
@@ -72,19 +75,32 @@ async function fetchLocations() {
 
 async function fetchSnorlax (): Promise<Pokemon | null> {
   try {
-    const response = await fetch('https://pokeapi.co/api/v2/pokemon/snorlax/');
+    const response_1 = await fetch('https://pokeapi.co/api/v2/pokemon/snorlax/');
 
-    if (!response.ok) {
-    console.error(`Error: ${response.status}`);
+    if (!response_1.ok) {
+    console.error(`Error: ${response_1.status}`);
     return null;
     }
-    const data = await response.json();
+    const data = await response_1.json();
+
+
+    const response_2 = await fetch(data.location_area_encounters);
+    if (!response_2.ok) {
+      console.error(`Error: ${response_2.status}`);
+      return null;
+    }
+    const encounters = await response_2.json();
+    console.log(encounters)
+
     return {
       id: data["id"],
       name: data["name"], 
       height: data["height"],
       weight: data["weight"],
-      types: data.types.map((t: any) => t.type.name) };
+      types: data.types.map((t: any) => t.type.name),
+      locations: encounters.map((e: any) => e.location_area.name),
+      imageURL: data["sprites"]["front_default"]
+ };
   }
   catch (error) {
     console.error(`Fetch Snorlax failed: ${error}`);
