@@ -105,7 +105,7 @@ export function PokemonDisplay({ pokemon, firstName, location }: { pokemon: Poke
     location_ = location_.charAt(0).toUpperCase() + location_.slice(1);
 
     return (
-    <div className="card-container">
+    <div className="pokemon-container">
         <h2 className="name">{fullName}</h2>
         <div className="location-row">
             <img className="house-image" src="../home.png"></img>

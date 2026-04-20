@@ -82,7 +82,7 @@ function App() {
           
           {!pokemon && !error && <p>Loading...</p>}
           {error && <p style={{ color: 'red' }}>{error}</p>}
-          {pokemon && <Pokemon.PokemonDisplay pokemon={pokemon} firstName={firstName} location={locationArea}/>}          <br />
+          {pokemon && <Pokemon.PokemonDisplay pokemon={pokemon} firstName={firstName} location={locationArea}/>} 
           <button onClick={() => setCurrentPage('settings')}>Settings</button>
         </>
       )}
