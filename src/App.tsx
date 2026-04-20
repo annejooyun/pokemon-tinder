@@ -75,10 +75,14 @@ function App() {
     <div className="app">
       {currentPage == 'app' && (
         <>
-          <h1>Pokemon Tinder</h1>
+          <div className="heading-row">
+            <img className="flame-image" src="/flame.png"></img>
+            <h1>Pokemon Tinder</h1>  
+          </div>
+          
           {!pokemon && !error && <p>Loading...</p>}
           {error && <p style={{ color: 'red' }}>{error}</p>}
-          {pokemon && <Pokemon.PokemonDisplay pokemon={pokemon} firstName={firstName} />}          <br />
+          {pokemon && <Pokemon.PokemonDisplay pokemon={pokemon} firstName={firstName} location={locationArea}/>}          <br />
           <button onClick={() => setCurrentPage('settings')}>Settings</button>
         </>
       )}

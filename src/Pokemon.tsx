@@ -95,27 +95,37 @@ async function fetchPokemon (name:string, pokemonType:string): Promise<Pokemon |
 }
 
 
-export function PokemonDisplay({ pokemon, firstName }: { pokemon: Pokemon; firstName: string | null }) {
+export function PokemonDisplay({ pokemon, firstName, location }: { pokemon: Pokemon; firstName: string | null; location: string }) {
+    // Format full name
     const pokemonName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
     const fullName = firstName + " the " + pokemonName;
+
+    //Format location
+    let location_ = location.replaceAll("-", " ");
+    location_ = location_.charAt(0).toUpperCase() + location_.slice(1);
+
     return (
     <div className="card-container">
-      <h2 className="name">{fullName}</h2>
-      <br />
-      <img src={pokemon.imageURL} />
-      <div className="stats">
-        <div className="row">
+        <h2 className="name">{fullName}</h2>
+        <div className="location-row">
+            <img className="house-image" src="../home.png"></img>
+            <h3>Lives in {location_}</h3>
+        </div>
+        <br />
+        <img className="profile-image" src={pokemon.imageURL}/>
+        <div className="stats">
+            <div className="row">
 
         </div>
         <div className="row">
-          <h3 className="about">About</h3>
+          <h3 className="about-header">About me</h3>
           <ul className="about-list">               
             <li>Height: {pokemon.height} dm</li>
             <li>Weight: {pokemon.weight} hg</li>
             <li>Type(s): {pokemon.types.join(', ')}</li>
           </ul>
-          <h3 className="locations">Quote</h3>  
-          <p> *Insert Chuck Norris quote here* </p>          
+          <h3 className="quote-header">Quote</h3>  
+          <p className="quote"> *Insert Chuck Norris quote here* </p>          
         </div>
       </div>
       <br />

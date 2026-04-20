@@ -10,10 +10,41 @@
 
 h1 {
   font-size: 2.5rem;
+  color: white;
+}
+
+h2 {
+  margin: 10px;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+.heading-row {
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  text-align: center;
   margin-bottom: 40px;
 }
 
-img {
+.flame-image {
+  height: 2.5rem;
+}
+
+.location-row {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.house-image {
+  height: 1rem;
+  margin-right: 3px;
+}
+
+.profile-image{
   width: 200px;
   height: 200px;
   margin: 10px;
@@ -21,7 +52,7 @@ img {
 
 .card-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 400px;
   min-height: 500px;
   border: 1px solid #ccc;
   border-radius: 12px;
@@ -43,11 +74,11 @@ ul {
   grid-template-columns: 1fr 1fr;
   gap: 20px;
   grid-template-areas: 
-    "a l"
-    "a-li l-li";
+    "a    q-h"
+    "a-li q";
 }
 
-.about {
+.about-header {
   grid-area: a;
 }
 
@@ -55,10 +86,10 @@ ul {
   grid-area: a-li;
 }
 
-.locations {
-  grid-area: l;
+.quote-header {
+  grid-area: q-h;
 }
 
-.locations-list {
-  grid-area: l-li;
+.quote {
+  grid-area: q;
 }
