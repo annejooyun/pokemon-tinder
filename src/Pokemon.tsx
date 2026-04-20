@@ -20,7 +20,7 @@ export async function fetchAllLocationAreas(): Promise<string[] | null> {
 }
 
 
-export async function fetchPokemonFromLocationArea(location: string): Promise<Pokemon | null> {
+export async function fetchPokemonFromLocationArea(location: string, pokemonType:string | null): Promise<Pokemon | null> {
   const formattedLocation = location.toLowerCase().replace(/ /g, '-')
 
   try {
@@ -45,7 +45,7 @@ export async function fetchPokemonFromLocationArea(location: string): Promise<Po
     const pokemonName = areaData.pokemon_encounters[randomIndex].pokemon.name
     
     // Fetch full Pokemon data
-    return await fetchPokemon(pokemonName)
+    return await fetchPokemon(pokemonName, pokemonType)
     
   } catch (error) {
     console.error(`Fetch Pokemon from location area failed: ${error}`)
@@ -53,38 +53,45 @@ export async function fetchPokemonFromLocationArea(location: string): Promise<Po
   }
 }
 
-async function fetchPokemon (name:string): Promise<Pokemon | null> {
-  try {
-    const response_1 = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
-
-    if (!response_1.ok) {
-      console.error(`Error: ${response_1.status}`);
-      return null;
+async function fetchPokemon (name:string, pokemonType:string): Promise<Pokemon | null> {
+    let url = "";
+    if (pokemonType) {
+        url = `https://pokeapi.co/api/v2/pokemon/${name}/?type=${pokemonType}`;
     }
-    const pokemon = await response_1.json();
-
-
-    const response_2 = await fetch(pokemon.location_area_encounters);
-    if (!response_2.ok) {
-      console.error(`Error: ${response_2.status}`);
-      return null;
+    else {
+        url = `https://pokeapi.co/api/v2/pokemon/${name}/`;
     }
-    const encounters = await response_2.json();
+    try {
+        const response_1 = await fetch(url);
 
-    return {
-      id: pokemon["id"],
-      name: pokemon["name"], 
-      height: pokemon["height"],
-      weight: pokemon["weight"],
-      types: pokemon.types.map((t: any) => t.type.name),
-      locations: encounters.map((e: any) => e.location_area.name),
-      imageURL: pokemon["sprites"]["front_default"]
- };
-  }
-  catch (error) {
-    console.error(`Fetch Pokemon failed: ${error}`);
-    return null;
-  }
+        if (!response_1.ok) {
+            console.error(`Error: ${response_1.status}`);
+            return null;
+        }
+        const pokemon = await response_1.json();
+
+
+        const response_2 = await fetch(pokemon.location_area_encounters);
+        if (!response_2.ok) {
+            console.error(`Error: ${response_2.status}`);
+            return null;
+        }
+        const encounters = await response_2.json();
+
+        return {
+            id: pokemon["id"],
+            name: pokemon["name"], 
+            height: pokemon["height"],
+            weight: pokemon["weight"],
+            types: pokemon.types.map((t: any) => t.type.name),
+            locations: encounters.map((e: any) => e.location_area.name),
+            imageURL: pokemon["sprites"]["front_default"]
+        };
+    }
+    catch (error) {
+        console.error(`Fetch Pokemon failed: ${error}`);
+        return null;
+    }
 }
 
 
@@ -107,8 +114,8 @@ export function PokemonDisplay({ pokemon, firstName }: { pokemon: Pokemon; first
             <li>Weight: {pokemon.weight} hg</li>
             <li>Type(s): {pokemon.types.join(', ')}</li>
           </ul>
-          <h3 className="locations">Locations</h3>  
-          <p className="locations-list">{pokemon.locations.join(', ')}</p>          
+          <h3 className="locations">Quote</h3>  
+          <p> *Insert Chuck Norris quote here* </p>          
         </div>
       </div>
       <br />

@@ -32,6 +32,7 @@ function App() {
   // User preferences
   const [locationArea, setLocationArea] = useLocalStorage('pokemon-location-area', 'canalave-city-canalave-gym')
   const [gender, setGender] = useLocalStorage<'male' | 'female' | 'both'>('pokemon-gender', 'male')
+  const [pokemonType, setPokemonType] = useLocalStorage('pokemon-type', null)
   
 
   // Save location area to localStorage whenever it changes
@@ -44,13 +45,18 @@ function App() {
     localStorage.setItem('pokemon-gender', gender)
   }, [gender])
 
+  // Save type in localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('pokemon-type', pokemonType)
+  }, [pokemonType])
+
 
   // Fetch initial Pokemon and location areas
   useEffect(() => {
   const loadData = async () => {
     try {
       const [fetchedPokemon, fetchedFirstName] = await Promise.all([
-        Pokemon.fetchPokemonFromLocationArea(locationArea),
+        Pokemon.fetchPokemonFromLocationArea(locationArea, pokemonType),
         fetchFirstName(gender)
       ])
       setPokemon(fetchedPokemon)
@@ -82,6 +88,8 @@ function App() {
           setLocationArea={setLocationArea}
           gender={gender}
           setGender={setGender}
+          pokemonType={pokemonType}
+          setPokemonType={setPokemonType}
           onBack={() => setCurrentPage('app')}
   />
 )}
