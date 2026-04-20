@@ -97,10 +97,16 @@ export default App
 
 
 async function fetchFirstName(gender: string): Promise<string | null> {
-  //TODO: Add logic for gender
+  let url = "";
+  if (gender === "both") {
+    url = `https://randomuser.me/api/?nat=US`;
+  }
+  else {
+    url = `https://randomuser.me/api/?gender=${gender}&nat=US`;
+  }
   try {
     //Nationality could be changed later if wanted
-    const response = await fetch(`https://randomuser.me/api/?gender=${gender}&nat=US`);
+    const response = await fetch(url);
 
     if(!response.ok){
       console.error(`Fetch failed: ${response.status}`);
