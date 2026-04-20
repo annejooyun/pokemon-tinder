@@ -24,7 +24,7 @@ function App() {
 
   // Pokemon data
   const [pokemon, setPokemon] = useState(null)
-  const [_, setAllLocationAreas] = useState(null)
+  const [allLocationAreas, setAllLocationAreas] = useState<string[] | null>(null)
 
   // First name data
   const [firstName, setFirstName] = useState(null)
@@ -55,10 +55,12 @@ function App() {
   useEffect(() => {
   const loadData = async () => {
     try {
-      const [fetchedPokemon, fetchedFirstName] = await Promise.all([
+      const [allLocationAreas, fetchedPokemon, fetchedFirstName] = await Promise.all([
+        Pokemon.fetchAllLocationAreas(),
         Pokemon.fetchPokemonFromLocationArea(locationArea, pokemonType),
         fetchFirstName(gender)
       ])
+      setAllLocationAreas(allLocationAreas)
       setPokemon(fetchedPokemon)
       setFirstName(fetchedFirstName)
       setError(null)
@@ -88,6 +90,7 @@ function App() {
       )}
       {currentPage === 'settings' && (
         <Settings 
+          allLocationAreas={allLocationAreas}
           locationArea={locationArea}
           setLocationArea={setLocationArea}
           gender={gender}

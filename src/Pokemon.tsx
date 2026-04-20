@@ -16,6 +16,7 @@ export async function fetchAllLocationAreas(): Promise<string[] | null> {
     return null;
   }
   const locationsAreas = await response.json();
+  console.log(locationsAreas);
   return (locationsAreas.results.map((loc: any) => loc.name));
 }
 
@@ -25,6 +26,7 @@ export async function fetchPokemonFromLocationArea(location: string, pokemonType
 
   try {
     const areaUrl = `https://pokeapi.co/api/v2/location-area/${formattedLocation}/`
+    
     console.log(`Trying location-area URL: ${areaUrl}`)
     const response = await fetch(areaUrl)
     
