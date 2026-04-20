@@ -15,3 +15,9 @@ npm run dev
 npm run build
 npm run preview
 ```
+
+## Sources
+Pokemon API: https://pokeapi.co/docs/v2
+Chuck Norris API: https://api.chucknorris.io
+Random Name API: https://randomuser.me
+Icons: https://www.flaticon.com
