@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 interface Settings {
     allLocationAreas: string[] | null
@@ -21,15 +21,14 @@ export function Settings({
     pokemonType,
     setPokemonType,
     onBack
+
 }: Settings) {
     const [searchTerm, setSearchTerm] = useState('')
     const [showDropdown, setShowDropdown] = useState(false)
 
     // Filter locations based on search
-    const filteredLocations = allLocationAreas
-      ? allLocationAreas.filter(loc => 
-          loc.toLowerCase().includes(searchTerm.toLowerCase())
-        ).slice(0, 10) // Limit to 10 results
+    const filteredLocations = allLocationAreas? allLocationAreas.filter(
+        loc => loc.toLowerCase().includes(searchTerm.toLowerCase())).slice(0, 10) // Limit to 10 results
       : []
 
     const handleLocationSelect = (location: string) => {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { use, useEffect, useState } from 'react'
 import './App.css'
 import { Settings } from './Settings'
 import * as Pokemon from './Pokemon'
@@ -23,17 +23,29 @@ function App() {
   const [error, setError] = useState<string | null>(null)
 
   // Pokemon data
-  const [pokemon, setPokemon] = useState(null)
+  const [pokemon, setPokemon] = useState<Pokemon.Pokemon | null>(null)
   const [allLocationAreas, setAllLocationAreas] = useState<string[] | null>(null)
 
   // First name data
-  const [firstName, setFirstName] = useState(null)
+  const [firstName, setFirstName] = useState<string | null>(null)
 
   // User preferences
   const [locationArea, setLocationArea] = useLocalStorage('pokemon-location-area', 'canalave-city-canalave-gym')
   const [gender, setGender] = useLocalStorage<'male' | 'female' | 'both'>('pokemon-gender', 'male')
-  const [pokemonType, setPokemonType] = useLocalStorage('pokemon-type', null)
+  const [pokemonType, setPokemonType] = useLocalStorage('pokemon-type', 'water')
   
+  // Load all location areas once
+  useEffect(() =>{
+    const load = async () => {
+      try {
+        const areas = await Pokemon.fetchAllLocationAreas();
+        setAllLocationAreas(areas);
+      } catch (error) {
+        console.error(`Falied to load location areas: ${error}`);
+      }
+    }
+    load()
+  }, [])
 
   // Save location area to localStorage whenever it changes
   useEffect(() => {
@@ -50,27 +62,24 @@ function App() {
     localStorage.setItem('pokemon-type', pokemonType)
   }, [pokemonType])
 
-
-  // Fetch initial Pokemon and location areas
+  // Update pokemon if locationArea, gender or type changes
   useEffect(() => {
   const loadData = async () => {
     try {
-      const [allLocationAreas, fetchedPokemon, fetchedFirstName] = await Promise.all([
-        Pokemon.fetchAllLocationAreas(),
+      const [fetchedPokemon, fetchedFirstName] = await Promise.all([
         Pokemon.fetchPokemonFromLocationArea(locationArea, pokemonType),
         fetchFirstName(gender)
       ])
-      setAllLocationAreas(allLocationAreas)
       setPokemon(fetchedPokemon)
       setFirstName(fetchedFirstName)
       setError(null)
     } catch (err) {
       console.error('Fetch error:', err)
-      setError('Failed to fetch Pokemon')
+      setError('Failed to fetch initial Pokemon')
     }
   }
   loadData()
-}, [locationArea, gender])
+}, [locationArea, gender, pokemonType])
 
   
   return (
