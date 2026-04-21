@@ -21,10 +21,11 @@ export async function fetchAllLocationAreas(): Promise<string[] | null> {
 }
 
 
-export async function fetchPokemonFromLocationArea(location: string, pokemonType:string | null): Promise<Pokemon | null> {
+export async function fetchPokemonFromLocationArea(location: string, pokemonType:string): Promise<Pokemon | null> {
   const formattedLocation = location.toLowerCase().replace(/ /g, '-')
 
   try {
+    // Load all Pokemon names in area
     const areaUrl = `https://pokeapi.co/api/v2/location-area/${formattedLocation}/`
     
     console.log(`Trying location-area URL: ${areaUrl}`)
@@ -41,13 +42,23 @@ export async function fetchPokemonFromLocationArea(location: string, pokemonType
       console.error('No Pokemon in this area')
       return null
     }
-    
-    // Pick a random Pokemon from the area
-    const randomIndex = Math.floor(Math.random() * areaData.pokemon_encounters.length)
-    const pokemonName = areaData.pokemon_encounters[randomIndex].pokemon.name
-    
-    // Fetch full Pokemon data
-    return await fetchPokemon(pokemonName, pokemonType)
+
+    // Load all Pokemons in area
+    const pokemonPromises = areaData.pokemon_encounters.map(x => fetchPokemon(x.pokemon.name))
+    const allPokemon = await Promise.all(pokemonPromises)
+
+    // Filter Pokemon based on type
+    const filteredPokemon = allPokemon.filter(pokemon => pokemon.types.includes(pokemonType));
+
+    if (filteredPokemon.length === 0) {
+      console.error(`No ${pokemonType} type Pokemon in this area`)
+      return null
+    }
+
+    // Pick a random Pokemon in filteredPokemon
+    const randomIndex = Math.floor(Math.random() * filteredPokemon.length)
+
+    return(filteredPokemon[randomIndex])
     
   } catch (error) {
     console.error(`Fetch Pokemon from location area failed: ${error}`)
@@ -55,16 +66,10 @@ export async function fetchPokemonFromLocationArea(location: string, pokemonType
   }
 }
 
-async function fetchPokemon (name:string, pokemonType:string): Promise<Pokemon | null> {
-    let url = "";
-    if (pokemonType) {
-        url = `https://pokeapi.co/api/v2/pokemon/${name}/?type=${pokemonType}`;
-    }
-    else {
-        url = `https://pokeapi.co/api/v2/pokemon/${name}/`;
-    }
+async function fetchPokemon (name:string): Promise<Pokemon | null> {
+
     try {
-        const response_1 = await fetch(url);
+        const response_1 = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
 
         if (!response_1.ok) {
             console.error(`Error: ${response_1.status}`);
