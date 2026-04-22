@@ -121,6 +121,16 @@ export function PokemonDisplay({ pokemon, firstName, location }: { pokemon: Poke
     let location_ = location.replaceAll("-", " ");
     location_ = location_.charAt(0).toUpperCase() + location_.slice(1);
 
+    const handleLike = () => {
+      console.log('Liked!', pokemon.name)
+      // Add to liked list
+    }
+
+    const handleDislike = () => {
+      console.log('Disliked!', pokemon.name)
+      // Move to next Pokemon
+    }
+
     return (
     <div className="container">
         <h2 className="name">{fullName}</h2>
@@ -144,6 +154,17 @@ export function PokemonDisplay({ pokemon, firstName, location }: { pokemon: Poke
           <h3 className="quote-header">Quote</h3>  
           <p className="quote"> *Insert Chuck Norris quote here* </p>          
         </div>
+
+        <div className="action-buttons">
+            <button className="dislike-button" onClick={handleDislike}>
+                <img src="../dislike.png" alt="Dislike" />
+            </button>
+            <button className="like-button" onClick={handleLike}>
+                <img src="../like.png" alt="Like"/>
+            </button>
+        </div>
+        
+
       </div>
       <br />
     </div>
