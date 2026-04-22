@@ -108,7 +108,7 @@ function App() {
             <h1>Pokemon Tinder</h1>  
           </div>
           
-          {!pokemon && !error && <p>Loading...</p> && loadingDisplay}
+          {!pokemon && !error && <LoadingDisplay/>}
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {pokemon && <Pokemon.PokemonDisplay pokemon={pokemon} firstName={firstName} location={locationArea}/>} 
           <button onClick={() => setCurrentPage('settings')}>Settings</button>
@@ -160,4 +160,13 @@ async function fetchFirstName(gender: string): Promise<string | null> {
     console.error(`Fetch first name failed: ${error}`);
     return null;
   }
+}
+
+
+function LoadingDisplay({}) {
+  return (
+    <div className="container">
+      <h2>...Loading</h2>
+    </div>
+  )
 }

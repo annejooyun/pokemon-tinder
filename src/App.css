@@ -52,7 +52,7 @@ h3 {
   margin: 10px;
 }
 
-.pokemon-container, .settings-container{
+.container{
   width: 100%;
   max-width: 400px;
   height: 500px;

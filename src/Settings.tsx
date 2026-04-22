@@ -64,7 +64,7 @@ export function Settings({
             <h1>Pokemon Tinder</h1>  
         </div>
 
-        <div className="settings-container">
+        <div className="container">
             <h2>Settings</h2>
             <div className="settings">
                 <div className="location-area">
