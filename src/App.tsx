@@ -26,7 +26,7 @@ function App() {
 
   // Pokemon data
   const [pokemon, setPokemon] = useState<Pokemon.Pokemon | null>(null);
-  const [pokemonTypes, setPokemonTypes] = useState<string[] | null>(null);
+  const [allPokemonTypes, setAllPokemonTypes] = useState<string[] | null>(null);
   const [allLocationAreas, setAllLocationAreas] = useState<string[] | null>(null);
 
   // First name data
@@ -56,7 +56,7 @@ function App() {
     const load = async () => {
       try {
         const types = await Pokemon.fetchAllPokemonTypes();
-        setPokemonTypes(types);
+        setAllPokemonTypes(types);
       } catch (error) {
         console.error(`Failed to load Pokemon types ${error}`);
       }
@@ -66,17 +66,17 @@ function App() {
 
   // Save location area to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('pokemon-location-area', locationArea)
+    localStorage.setItem('pokemon-location-area', locationArea);
   }, [locationArea])
 
   // Save gender to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('pokemon-gender', gender)
+    localStorage.setItem('pokemon-gender', gender);
   }, [gender])
 
   // Save type in localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem('pokemon-type', pokemonType)
+    localStorage.setItem('pokemon-type', pokemonType);
   }, [pokemonType])
 
   // Update pokemon if locationArea, gender or type changes
@@ -108,7 +108,7 @@ function App() {
             <h1>Pokemon Tinder</h1>  
           </div>
           
-          {!pokemon && !error && <p>Loading...</p>}
+          {!pokemon && !error && <p>Loading...</p> && loadingDisplay}
           {error && <p style={{ color: 'red' }}>{error}</p>}
           {pokemon && <Pokemon.PokemonDisplay pokemon={pokemon} firstName={firstName} location={locationArea}/>} 
           <button onClick={() => setCurrentPage('settings')}>Settings</button>
@@ -117,6 +117,7 @@ function App() {
       {currentPage === 'settings' && (
         <Settings 
           allLocationAreas={allLocationAreas}
+          allPokemonTypes={allPokemonTypes}
           locationArea={locationArea}
           setLocationArea={setLocationArea}
           gender={gender}
@@ -124,17 +125,15 @@ function App() {
           pokemonType={pokemonType}
           setPokemonType={setPokemonType}
           onBack={() => setCurrentPage('app')}
-  />
-)}
-  </div>
+          />
+        )}
+    </div>
 
 )
 }
 
 
 export default App
-
-
 
 
 async function fetchFirstName(gender: string): Promise<string | null> {
