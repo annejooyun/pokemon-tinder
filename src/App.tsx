@@ -3,6 +3,7 @@ import './App.css'
 import { Settings } from './Settings'
 import * as Pokemon from './Pokemon'
 
+
 // Local storage for user preferences
 function useLocalStorage<T>(key: string, defaultValue: T): [T, (value: T) => void] {
   const [value, setValue] = useState<T>(() => {
@@ -17,23 +18,26 @@ function useLocalStorage<T>(key: string, defaultValue: T): [T, (value: T) => voi
   return [value, setValue]
 }
 
+
 function App() {
   // UI state
-  const [currentPage, setCurrentPage] = useState<'app' | 'settings' | 'login'>('app')
-  const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState<'app' | 'settings' | 'login'>('app');
+  const [error, setError] = useState<string | null>(null);
 
   // Pokemon data
-  const [pokemon, setPokemon] = useState<Pokemon.Pokemon | null>(null)
-  const [allLocationAreas, setAllLocationAreas] = useState<string[] | null>(null)
+  const [pokemon, setPokemon] = useState<Pokemon.Pokemon | null>(null);
+  const [pokemonTypes, setPokemonTypes] = useState<string[] | null>(null);
+  const [allLocationAreas, setAllLocationAreas] = useState<string[] | null>(null);
 
   // First name data
-  const [firstName, setFirstName] = useState<string | null>(null)
+  const [firstName, setFirstName] = useState<string | null>(null);
 
   // User preferences
-  const [locationArea, setLocationArea] = useLocalStorage('pokemon-location-area', 'canalave-city-canalave-gym')
-  const [gender, setGender] = useLocalStorage<'male' | 'female' | 'both'>('pokemon-gender', 'male')
-  const [pokemonType, setPokemonType] = useLocalStorage('pokemon-type', 'normal')
+  const [locationArea, setLocationArea] = useLocalStorage('pokemon-location-area', 'canalave-city-canalave-gym');
+  const [gender, setGender] = useLocalStorage<'male' | 'female' | 'both'>('pokemon-gender', 'male');
+  const [pokemonType, setPokemonType] = useLocalStorage('pokemon-type', 'normal');
   
+
   // Load all location areas once
   useEffect(() =>{
     const load = async () => {
@@ -42,6 +46,19 @@ function App() {
         setAllLocationAreas(areas);
       } catch (error) {
         console.error(`Falied to load location areas: ${error}`);
+      }
+    }
+    load()
+  }, [])
+
+  //load all Pokemon types once
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const types = await Pokemon.fetchAllPokemonTypes();
+        setPokemonTypes(types);
+      } catch (error) {
+        console.error(`Failed to load Pokemon types ${error}`);
       }
     }
     load()

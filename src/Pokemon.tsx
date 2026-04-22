@@ -16,8 +16,18 @@ export async function fetchAllLocationAreas(): Promise<string[] | null> {
     return null;
   }
   const locationsAreas = await response.json();
-  console.log(locationsAreas);
   return (locationsAreas.results.map((loc: any) => loc.name));
+}
+
+export async function fetchAllPokemonTypes(): Promise<string[] | null> {
+    const response = await fetch('https://pokeapi.co/api/v2/type/');
+    if (!response.ok) {
+        console.error(`Error: ${response.status}`);
+        return null;
+    }
+    const pokemonTypes = await response.json();
+    console.log(pokemonTypes);
+    return(pokemonTypes.results.map((typ: any) => typ.name));
 }
 
 
