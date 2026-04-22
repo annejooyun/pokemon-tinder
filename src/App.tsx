@@ -32,7 +32,7 @@ function App() {
   // User preferences
   const [locationArea, setLocationArea] = useLocalStorage('pokemon-location-area', 'canalave-city-canalave-gym')
   const [gender, setGender] = useLocalStorage<'male' | 'female' | 'both'>('pokemon-gender', 'male')
-  const [pokemonType, setPokemonType] = useLocalStorage('pokemon-type', 'water')
+  const [pokemonType, setPokemonType] = useLocalStorage('pokemon-type', 'normal')
   
   // Load all location areas once
   useEffect(() =>{

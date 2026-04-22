@@ -1,7 +1,10 @@
 import { useState } from 'react'
 
+const allPokemonTypes = ['normal', 'water', 'fire', 'grass']
+
 interface Settings {
     allLocationAreas: string[] | null
+    allPokemonTypes: string[] | null
     locationArea: string
     setLocationArea: (value: string) => void
     gender: 'male' | 'female' | 'both'
@@ -23,18 +26,34 @@ export function Settings({
     onBack
 
 }: Settings) {
-    const [searchTerm, setSearchTerm] = useState('')
-    const [showDropdown, setShowDropdown] = useState(false)
+    // Location dropdown
+    const [locationSearchTerm, setLocationSearchTerm] = useState('')
+    const [showLocationDropdown, setShowLocationDropdown] = useState(false)
+
+    // Pokemon type dropdown
+    const [pokemonTypeSearchTerm, setPokemonTypeSearchTerm] = useState('')
+    const [showPokemonTypeDropdown, setShowPokemonTypeDropdown] = useState(false)
 
     // Filter locations based on search
     const filteredLocations = allLocationAreas? allLocationAreas.filter(
-        loc => loc.toLowerCase().includes(searchTerm.toLowerCase())).slice(0, 10) // Limit to 10 results
+        loc => loc.toLowerCase().includes(locationSearchTerm.toLowerCase())).slice(0, 10) // Limit to 10 results
+      : []
+
+     // Filter Pokemon types based on search
+    const filteredPokemonTypes = allPokemonTypes ? allPokemonTypes.filter(
+        loc => loc.toLowerCase().includes(pokemonTypeSearchTerm.toLowerCase())).slice(0, 10) // Limit to 10 results
       : []
 
     const handleLocationSelect = (location: string) => {
       setLocationArea(location)
-      setSearchTerm('')
-      setShowDropdown(false)
+      setLocationSearchTerm('')
+      setShowLocationDropdown(false)
+    }
+
+    const handlePokemonTypeSelect = (type:string) => {
+        setPokemonType(type)
+        setPokemonTypeSearchTerm('')
+        setShowPokemonTypeDropdown(false)
     }
 
 
@@ -45,31 +64,31 @@ export function Settings({
             <h1>Pokemon Tinder</h1>  
         </div>
 
-                <div className="settings-container">
+        <div className="settings-container">
             <h2>Settings</h2>
             <div className="settings">
-                <div className="locationArea">
+                <div className="location-area">
                     <label>Location Area: </label>
                     <div style={{ position: 'relative' }}>
                       <input 
                         type="text"
-                        value={searchTerm}
+                        value={locationSearchTerm}
                         onChange={(e) => {
-                          setSearchTerm(e.target.value)
-                          setShowDropdown(true)
+                          setLocationSearchTerm(e.target.value)
+                          setShowLocationDropdown(true)
                         }}
-                        onFocus={() => setShowDropdown(true)}
+                        onFocus={() => setShowLocationDropdown(true)}
                         placeholder={"Search locations..."}
-                        className="location-input"
+                        className="settings-input"
                       />
 
-                      {showDropdown && searchTerm && filteredLocations.length > 0 && (
-                        <div className="location-dropdown">
+                      {showLocationDropdown && locationSearchTerm && filteredLocations.length > 0 && (
+                        <div className="dropdown">
                           {filteredLocations.map((loc) => (
                             <div
                               key={loc}
                               onClick={() => handleLocationSelect(loc)}
-                              className="location-dropdown-item"
+                              className="dropdown-item"
                               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
                               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                             >
@@ -79,7 +98,7 @@ export function Settings({
                         </div>
                       )}
                     </div>
-                    <div className="current-location-area">
+                    <div className="current-text">
                       Current: {locationArea}
                     </div>
                 </div>
@@ -94,10 +113,39 @@ export function Settings({
                     </div>
                     
                 </div>
-                <div className="pokemonType">
+                <div className="pokemon-type">
                     <label>Pokemon type: </label>
-                    <div>
-                        <input value={pokemonType} onChange={(e) => setPokemonType(e.target.value)}></input>
+                    <div style={{ position: 'relative' }}>
+                      <input 
+                        type="text"
+                        value={pokemonTypeSearchTerm}
+                        onChange={(e) => {
+                          setPokemonTypeSearchTerm(e.target.value)
+                          setShowPokemonTypeDropdown(true)
+                        }}
+                        onFocus={() => setShowPokemonTypeDropdown(true)}
+                        placeholder={"Search Pokemon types..."}
+                        className="settings-input"
+                      />
+
+                      {showPokemonTypeDropdown && pokemonTypeSearchTerm && filteredPokemonTypes.length > 0 && (
+                        <div className="dropdown">
+                          {filteredPokemonTypes.map((loc) => (
+                            <div
+                              key={loc}
+                              onClick={() => handlePokemonTypeSelect(loc)}
+                              className="dropdown-item"
+                              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
+                              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+                            >
+                              {loc}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <div className="current-text">
+                      Current: {pokemonType}
                     </div>
                 </div>
             </div>
