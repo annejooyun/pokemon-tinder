@@ -59,32 +59,17 @@ export function Settings({
                           setShowDropdown(true)
                         }}
                         onFocus={() => setShowDropdown(true)}
-                        placeholder={locationArea || "Search locations..."}
+                        placeholder={"Search locations..."}
+                        className="location-input"
                       />
 
                       {showDropdown && searchTerm && filteredLocations.length > 0 && (
-                        <div style={{
-                            //TODO: Dropdown is too messy. Separate out styles.
-                          position: 'absolute',
-                          top: '100%',
-                          left: 0,
-                          right: 0,
-                          backgroundColor: 'white',
-                          border: '1px solid #ccc',
-                          borderRadius: '4px',
-                          maxHeight: '200px',
-                          overflowY: 'auto',
-                          zIndex: 1000
-                        }}>
+                        <div className="location-dropdown">
                           {filteredLocations.map((loc) => (
                             <div
                               key={loc}
                               onClick={() => handleLocationSelect(loc)}
-                              style={{
-                                padding: '8px 12px',
-                                cursor: 'pointer',
-                                borderBottom: '1px solid #eee'
-                              }}
+                              className="location-dropdown-item"
                               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f0f0f0'}
                               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
                             >
@@ -94,21 +79,26 @@ export function Settings({
                         </div>
                       )}
                     </div>
-                    <div style={{ fontSize: '0.85rem', marginTop: '5px', color: '#666' }}>
+                    <div className="current-location-area">
                       Current: {locationArea}
                     </div>
                 </div>
                 <div className="gender">
                     <label>Gender: </label>
-                    <select value={gender} onChange={(e) => setGender(e.target.value as any)}>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="both">Both</option>
-                    </select>
+                    <div>
+                        <select value={gender} onChange={(e) => setGender(e.target.value as any)}>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="both">Both</option>
+                        </select>
+                    </div>
+                    
                 </div>
                 <div className="pokemonType">
                     <label>Pokemon type: </label>
-                    <input value={pokemonType} onChange={(e) => setPokemonType(e.target.value)}></input>
+                    <div>
+                        <input value={pokemonType} onChange={(e) => setPokemonType(e.target.value)}></input>
+                    </div>
                 </div>
             </div>
         </div>
