@@ -33,9 +33,9 @@ function App() {
   const [firstName, setFirstName] = useState<string | null>(null);
 
   // User preferences
-  const [locationArea, setLocationArea] = useLocalStorage('pokemon-location-area', 'canalave-city-canalave-gym');
+  const [locationArea, setLocationArea] = useLocalStorage('pokemon-location-area', 'canalave-city-are');
   const [gender, setGender] = useLocalStorage<'male' | 'female' | 'both'>('pokemon-gender', 'male');
-  const [pokemonType, setPokemonType] = useLocalStorage('pokemon-type', 'normal');
+  const [pokemonType, setPokemonType] = useLocalStorage('pokemon-type', 'water');
   
 
   // Load all location areas once
