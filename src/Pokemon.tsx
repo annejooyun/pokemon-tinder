@@ -7,7 +7,7 @@ export type Pokemon = {
   weight: number;
   types: string[];
   locations: string[];
-  imageURL?: string;
+  imageURL: string;
 };
 
 export type SeenPokemon = {
@@ -46,7 +46,7 @@ export async function fetchAllPokemonTypes(): Promise<string[] | null> {
   return pokemonTypes.results.map((typ: any) => typ.name);
 }
 
-export async function fetchPokemonFromLocationArea(
+export async function fetchPokemonWithOptions(
   location: string,
   pokemonType: string,
 ): Promise<Pokemon | null> {
@@ -73,7 +73,7 @@ export async function fetchPokemonFromLocationArea(
     }
 
     // Load all Pokemons in area
-    const pokemonPromises = areaData.pokemon_encounters.map((x) =>
+    const pokemonPromises = areaData.pokemon_encounters.map((x: any) =>
       fetchPokemon(x.pokemon.name),
     );
     const allPokemon = await Promise.all(pokemonPromises);
@@ -138,23 +138,26 @@ async function loadNewPokemon(
   pokemonType: string,
   gender: string,
   setFirstName: (value: string) => void,
+  setJoke: (value: string) => void,
   setError: (value: string) => void,
 ) {
   setPokemon(null);
   const minLoadTime = new Promise((resolve) => setTimeout(resolve, 200));
   try {
-    const [fetchedPokemon, fetchedFirstName] = await Promise.all([
-      fetchPokemonFromLocationArea(location, pokemonType),
+    const [fetchedPokemon, fetchedFirstName, fetchedJoke] = await Promise.all([
+      fetchPokemonWithOptions(location, pokemonType),
       fetchFirstName(gender),
+      fetchRandomChuckNorrisJoke(),
       minLoadTime,
     ]);
 
     setPokemon(fetchedPokemon);
     setFirstName(fetchedFirstName);
+    setJoke(fetchedJoke);
     setError("");
   } catch (err) {
     console.error("Fetch error:", err);
-    setError("Failed to fetch Pokemon");
+    setError("Failed to fetch new Pokemon");
   }
 }
 
@@ -177,6 +180,17 @@ async function fetchFirstName(gender: string): Promise<string> {
   return user.results[0].name.first;
 }
 
+async function fetchRandomChuckNorrisJoke() {
+  const response = await fetch(`https://api.chucknorris.io/jokes/random`);
+
+  if (!response.ok) {
+    throw new Error(`Fetch Chuch Norris joke failed: ${response.status}`);
+  }
+
+  const joke = await response.json();
+  return joke.value;
+}
+
 export function Pokemon({
   location,
   pokemonType,
@@ -186,6 +200,7 @@ export function Pokemon({
 }: PokemonInterface) {
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
+  const [joke, setJoke] = useState<string | null>(null);
 
   // Update pokemon if locationArea, gender or type changes
   useEffect(() => {
@@ -195,6 +210,7 @@ export function Pokemon({
       pokemonType,
       gender,
       setFirstName,
+      setJoke,
       setError,
     );
   }, [location, gender, pokemonType]);
@@ -232,6 +248,7 @@ export function Pokemon({
       pokemonType,
       gender,
       setFirstName,
+      setJoke,
       setError,
     );
   };
@@ -246,6 +263,7 @@ export function Pokemon({
       pokemonType,
       gender,
       setFirstName,
+      setJoke,
       setError,
     );
   };
@@ -273,7 +291,7 @@ export function Pokemon({
               <li>Type(s): {pokemon.types.join(", ")}</li>
             </ul>
             <h3 className="quote-header">Quote</h3>
-            <p className="quote"> *Insert Chuck Norris quote here* </p>
+            <p className="quote"> {joke} </p>
           </div>
 
           <div className="action-buttons">
