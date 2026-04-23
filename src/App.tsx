@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import './App.css'
 import { Settings } from './Settings'
-import * as Pokemon from './Pokemon'
+import * as P from './Pokemon'
 
 
 // Local storage for user preferences
@@ -25,7 +25,6 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   // Pokemon data
-  const [pokemon, setPokemon] = useState<Pokemon.Pokemon | null>(null);
   const [allPokemonTypes, setAllPokemonTypes] = useState<string[] | null>(null);
   const [allLocationAreas, setAllLocationAreas] = useState<string[] | null>(null);
 
@@ -42,7 +41,7 @@ function App() {
   useEffect(() =>{
     const load = async () => {
       try {
-        const areas = await Pokemon.fetchAllLocationAreas();
+        const areas = await P.fetchAllLocationAreas();
         setAllLocationAreas(areas);
       } catch (error) {
         console.error(`Falied to load location areas: ${error}`);
@@ -55,7 +54,7 @@ function App() {
   useEffect(() => {
     const load = async () => {
       try {
-        const types = await Pokemon.fetchAllPokemonTypes();
+        const types = await P.fetchAllPokemonTypes();
         setAllPokemonTypes(types);
       } catch (error) {
         console.error(`Failed to load Pokemon types ${error}`);
@@ -63,6 +62,9 @@ function App() {
     }
     load()
   }, [])
+
+
+
 
   // Save location area to localStorage whenever it changes
   useEffect(() => {
@@ -79,24 +81,7 @@ function App() {
     localStorage.setItem('pokemon-type', pokemonType);
   }, [pokemonType])
 
-  // Update pokemon if locationArea, gender or type changes
-  useEffect(() => {
-  const loadData = async () => {
-    try {
-      const [fetchedPokemon, fetchedFirstName] = await Promise.all([
-        Pokemon.fetchPokemonFromLocationArea(locationArea, pokemonType),
-        fetchFirstName(gender)
-      ])
-      setPokemon(fetchedPokemon)
-      setFirstName(fetchedFirstName)
-      setError(null)
-    } catch (err) {
-      console.error('Fetch error:', err)
-      setError('Failed to fetch Pokemon')
-    }
-  }
-  loadData()
-  }, [locationArea, gender, pokemonType])
+
 
   let codeBlock = null;
 
@@ -104,13 +89,15 @@ function App() {
     case("app"):
         codeBlock =
         <>
-          {!pokemon && !error && <LoadingDisplay/>}
-          {error && <p style={{ color: 'red' }}>{error}</p>}
-          {pokemon && <Pokemon.PokemonDisplay 
-            pokemon={pokemon} 
+          <P.Pokemon 
             firstName={firstName} 
-            location={locationArea}/
-          >} 
+            location={locationArea}
+            pokemonType={pokemonType}
+            gender={gender}
+            setFirstName={setFirstName}
+            error={error}
+            setError={setError}
+          />
           <button onClick={() => setCurrentPage('settings')}>Settings</button>
         </>;
         break;
@@ -142,8 +129,7 @@ function App() {
       </div>
       {codeBlock}
     </div>
-
-)
+    )
 }
 
 
@@ -151,31 +137,6 @@ function App() {
 export default App
 
 
-async function fetchFirstName(gender: string): Promise<string | null> {
-  let url = "";
-  if (gender === "both") {
-    url = `https://randomuser.me/api/?nat=US`;
-  }
-  else {
-    url = `https://randomuser.me/api/?gender=${gender}&nat=US`;
-  }
-  try {
-    //Nationality could be changed later if wanted
-    const response = await fetch(url);
-
-    if(!response.ok){
-      console.error(`Fetch failed: ${response.status}`);
-      return null;
-    }
-
-    const user = await response.json();
-    return(user.results[0].name.first);
-  }
-  catch (error){
-    console.error(`Fetch first name failed: ${error}`);
-    return null;
-  }
-}
 
 
 function LoadingDisplay({}) {

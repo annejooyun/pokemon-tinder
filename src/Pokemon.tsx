@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react'
+
 export type Pokemon = {
     id: number;
     name: string;
@@ -12,6 +14,16 @@ export type SeenPokemon = {
     firstName: string;
     pokemonName: string;
     liked: true | false;
+}
+
+interface PokemonInterface {
+  firstName: string | null
+  location: string
+  pokemonType: string
+  gender: string
+  setFirstName:(value:string) => void
+  error: string | null
+  setError: (value:string) => void
 }
 
 
@@ -114,8 +126,76 @@ async function fetchPokemon (name:string): Promise<Pokemon | null> {
   }
 }
 
+async function fetchFirstName(gender: string): Promise<string> {
+  let url = "";
+  if (gender === "both") {
+    url = `https://randomuser.me/api/?nat=US`;
+  }
+  else {
+    url = `https://randomuser.me/api/?gender=${gender}&nat=US`;
+  }
 
-export function PokemonDisplay({ pokemon, firstName, location }: { pokemon: Pokemon; firstName: string | null; location: string }) {
+    //Nationality could be changed later if wanted
+    const response = await fetch(url);
+
+    if(!response.ok){
+      throw new Error (`Fetch first name failed: ${response.status}`);
+    }
+
+    const user = await response.json();
+    return(user.results[0].name.first);
+
+}
+
+
+
+export function Pokemon({  
+  firstName, 
+  location, 
+  pokemonType, 
+  gender,
+  setFirstName,
+  error,
+  setError,
+}: PokemonInterface) { 
+
+    const [pokemon, setPokemon] = useState<Pokemon | null>(null);
+
+    // Update pokemon if locationArea, gender or type changes
+    useEffect(() => {
+      const loadData = async () => {
+        setPokemon(null)
+        try {
+          const [fetchedPokemon, fetchedFirstName] = await Promise.all([
+            fetchPokemonFromLocationArea(location, pokemonType),
+            fetchFirstName(gender)
+          ])
+
+          setPokemon(fetchedPokemon)
+          setFirstName(fetchedFirstName)
+          setError("")
+        } catch (err) {
+          console.error('Fetch error:', err)
+          setError('Failed to fetch Pokemon')
+        }
+      }
+      loadData()
+      }, [location, gender, pokemonType])
+
+    // Loading screen
+    if (!pokemon && !error) {
+      return(
+        <div className="container">
+          <h2>...Loading</h2>
+        </div>
+      )
+    }
+
+    if (pokemon === null) {
+      console.error(`Failed to fetch Pokemon`);
+      return null;
+    }
+
     // Format full name
     const pokemonName = pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1);
     const fullName = firstName + " the " + pokemonName;
@@ -134,8 +214,16 @@ export function PokemonDisplay({ pokemon, firstName, location }: { pokemon: Poke
       // Move to next Pokemon
     }
 
-    return (
-    <div className="container">
+
+
+    let codeBlock = null;
+    if (error) {
+      codeBlock =
+      <p style={{ color: 'red' }}>{error}</p>
+    }
+    else{
+      codeBlock = 
+      <div className="container">
         <h2 className="name">{fullName}</h2>
         <div className="location-row">
             <img className="house-image" src="../home.png"></img>
@@ -166,14 +254,11 @@ export function PokemonDisplay({ pokemon, firstName, location }: { pokemon: Poke
                 <img src="../like.png" alt="Like"/>
             </button>
         </div>
-        
-
       </div>
       <br />
     </div>
-  )
+    }
+    return (codeBlock)
 }
-
-
 
 
