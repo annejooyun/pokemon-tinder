@@ -51,11 +51,10 @@ export async function fetchPokemonFromLocationArea(location: string, pokemonType
       console.error(`Location-area not found: ${response.status}`)
       return null
     }
-    
     const areaData = await response.json()
     
     if (!areaData.pokemon_encounters || areaData.pokemon_encounters.length === 0) {
-      console.error('No Pokemon in this area')
+      console.error('No Pokemon in this area');
       return null
     }
 
@@ -83,38 +82,36 @@ export async function fetchPokemonFromLocationArea(location: string, pokemonType
 }
 
 async function fetchPokemon (name:string): Promise<Pokemon | null> {
+  try {
+    const response_1 = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
 
-    try {
-        const response_1 = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
-
-        if (!response_1.ok) {
-            console.error(`Error: ${response_1.status}`);
-            return null;
-        }
-        const pokemon = await response_1.json();
-
-
-        const response_2 = await fetch(pokemon.location_area_encounters);
-        if (!response_2.ok) {
-            console.error(`Error: ${response_2.status}`);
-            return null;
-        }
-        const encounters = await response_2.json();
-
-        return {
-            id: pokemon["id"],
-            name: pokemon["name"], 
-            height: pokemon["height"],
-            weight: pokemon["weight"],
-            types: pokemon.types.map((t: any) => t.type.name),
-            locations: encounters.map((e: any) => e.location_area.name),
-            imageURL: pokemon["sprites"]["front_default"]
-        };
-    }
-    catch (error) {
-        console.error(`Fetch Pokemon failed: ${error}`);
+    if (!response_1.ok) {
+        console.error(`Error: ${response_1.status}`);
         return null;
     }
+    const pokemon = await response_1.json();
+
+    const response_2 = await fetch(pokemon.location_area_encounters);
+    if (!response_2.ok) {
+        console.error(`Error: ${response_2.status}`);
+        return null;
+    }
+    const encounters = await response_2.json();
+
+    return {
+        id: pokemon["id"],
+        name: pokemon["name"], 
+        height: pokemon["height"],
+        weight: pokemon["weight"],
+        types: pokemon.types.map((t: any) => t.type.name),
+        locations: encounters.map((e: any) => e.location_area.name),
+        imageURL: pokemon["sprites"]["front_default"]
+      };
+    }
+    catch (error) {
+    console.error(`Fetch Pokemon failed: ${error}`);
+    return null;
+  }
 }
 
 

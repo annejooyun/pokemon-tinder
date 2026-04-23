@@ -92,45 +92,60 @@ function App() {
       setError(null)
     } catch (err) {
       console.error('Fetch error:', err)
-      setError('Failed to fetch initial Pokemon')
+      setError('Failed to fetch Pokemon')
     }
   }
   loadData()
-}, [locationArea, gender, pokemonType])
+  }, [locationArea, gender, pokemonType])
 
-  
-  return (
-    <div className="app">
-      {currentPage == 'app' && (
+  let codeBlock = null;
+
+  switch(currentPage){
+    case("app"):
+        codeBlock =
         <>
-          <div className="heading-row">
-            <img className="flame-image" src="/flame.png"></img>
-            <h1>Pokemon Tinder</h1>  
-          </div>
-          
           {!pokemon && !error && <LoadingDisplay/>}
           {error && <p style={{ color: 'red' }}>{error}</p>}
-          {pokemon && <Pokemon.PokemonDisplay pokemon={pokemon} firstName={firstName} location={locationArea}/>} 
+          {pokemon && <Pokemon.PokemonDisplay 
+            pokemon={pokemon} 
+            firstName={firstName} 
+            location={locationArea}/
+          >} 
           <button onClick={() => setCurrentPage('settings')}>Settings</button>
-        </>
-      )}
-      {currentPage === 'settings' && (
-        <Settings 
-          allLocationAreas={allLocationAreas}
-          allPokemonTypes={allPokemonTypes}
-          locationArea={locationArea}
-          setLocationArea={setLocationArea}
-          gender={gender}
-          setGender={setGender}
-          pokemonType={pokemonType}
-          setPokemonType={setPokemonType}
-          onBack={() => setCurrentPage('app')}
-          />
-        )}
+        </>;
+        break;
+    case("settings"):
+        codeBlock =
+          <Settings 
+            allLocationAreas={allLocationAreas}
+            allPokemonTypes={allPokemonTypes}
+            locationArea={locationArea}
+            setLocationArea={setLocationArea}
+            gender={gender}
+            setGender={setGender}
+            pokemonType={pokemonType}
+            setPokemonType={setPokemonType}
+            onBack={() => setCurrentPage('app')}
+          />;
+          break;
+    case("login"):
+        codeBlock =
+        <></>;
+        break;
+  }
+
+  return (
+    <div className="app">
+      <div className="heading-row">
+        <img className="flame-image" src="/flame.png"></img>
+        <h1>Pokemon Tinder</h1>  
+      </div>
+      {codeBlock}
     </div>
 
 )
 }
+
 
 
 export default App

@@ -59,11 +59,6 @@ export function Settings({
 
     return(
         <>
-        <div className="heading-row">
-            <img className="flame-image" src="/flame.png"></img>
-            <h1>Pokemon Tinder</h1>  
-        </div>
-
         <div className="container">
             <h2>Settings</h2>
             <div className="settings">
