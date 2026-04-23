@@ -134,6 +134,32 @@ async function fetchPokemon(name: string): Promise<Pokemon | null> {
   }
 }
 
+async function loadNewPokemon(
+  setPokemon: (value: Pokemon | null) => void,
+  location: string,
+  pokemonType: string,
+  gender: string,
+  setFirstName: (value: string) => void,
+  setError: (value: string) => void,
+) {
+  setPokemon(null);
+  const minLoadTime = new Promise((resolve) => setTimeout(resolve, 200));
+  try {
+    const [fetchedPokemon, fetchedFirstName] = await Promise.all([
+      fetchPokemonFromLocationArea(location, pokemonType),
+      fetchFirstName(gender),
+      minLoadTime,
+    ]);
+
+    setPokemon(fetchedPokemon);
+    setFirstName(fetchedFirstName);
+    setError("");
+  } catch (err) {
+    console.error("Fetch error:", err);
+    setError("Failed to fetch Pokemon");
+  }
+}
+
 async function fetchFirstName(gender: string): Promise<string> {
   let url = "";
   if (gender === "both") {
@@ -166,25 +192,14 @@ export function Pokemon({
 
   // Update pokemon if locationArea, gender or type changes
   useEffect(() => {
-    const loadData = async () => {
-      setPokemon(null);
-      const minLoadTime = new Promise((resolve) => setTimeout(resolve, 200));
-      try {
-        const [fetchedPokemon, fetchedFirstName] = await Promise.all([
-          fetchPokemonFromLocationArea(location, pokemonType),
-          fetchFirstName(gender),
-          minLoadTime,
-        ]);
-
-        setPokemon(fetchedPokemon);
-        setFirstName(fetchedFirstName);
-        setError("");
-      } catch (err) {
-        console.error("Fetch error:", err);
-        setError("Failed to fetch Pokemon");
-      }
-    };
-    loadData();
+    loadNewPokemon(
+      setPokemon,
+      location,
+      pokemonType,
+      gender,
+      setFirstName,
+      setError,
+    );
   }, [location, gender, pokemonType]);
 
   // Loading screen
@@ -210,14 +225,32 @@ export function Pokemon({
   let location_ = location.replaceAll("-", " ");
   location_ = location_.charAt(0).toUpperCase() + location_.slice(1);
 
-  const handleLike = () => {
+  const handleLike = async () => {
     console.log("Liked!", pokemon.name);
-    // Add to liked list
+    // Add to seen list with liked = true
+    //Load new Pokemon
+    loadNewPokemon(
+      setPokemon,
+      location,
+      pokemonType,
+      gender,
+      setFirstName,
+      setError,
+    );
   };
 
   const handleDislike = () => {
     console.log("Disliked!", pokemon.name);
+    // Add to seen list with liked = false
     // Move to next Pokemon
+    loadNewPokemon(
+      setPokemon,
+      location,
+      pokemonType,
+      gender,
+      setFirstName,
+      setError,
+    );
   };
 
   let codeBlock = null;
