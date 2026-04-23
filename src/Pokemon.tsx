@@ -17,11 +17,9 @@ export type SeenPokemon = {
 };
 
 interface PokemonInterface {
-  firstName: string | null;
   location: string;
   pokemonType: string;
   gender: string;
-  setFirstName: (value: string) => void;
   error: string | null;
   setError: (value: string) => void;
 }
@@ -180,15 +178,14 @@ async function fetchFirstName(gender: string): Promise<string> {
 }
 
 export function Pokemon({
-  firstName,
   location,
   pokemonType,
   gender,
-  setFirstName,
   error,
   setError,
 }: PokemonInterface) {
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
+  const [firstName, setFirstName] = useState<string | null>(null);
 
   // Update pokemon if locationArea, gender or type changes
   useEffect(() => {

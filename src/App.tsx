@@ -33,9 +33,6 @@ function App() {
     null,
   );
 
-  // First name data
-  const [firstName, setFirstName] = useState<string | null>(null);
-
   // User preferences
   const [locationArea, setLocationArea] = useLocalStorage(
     "pokemon-location-area",
@@ -98,11 +95,9 @@ function App() {
       codeBlock = (
         <>
           <P.Pokemon
-            firstName={firstName}
             location={locationArea}
             pokemonType={pokemonType}
             gender={gender}
-            setFirstName={setFirstName}
             error={error}
             setError={setError}
           />
@@ -142,11 +137,3 @@ function App() {
 }
 
 export default App;
-
-function LoadingDisplay({}) {
-  return (
-    <div className="container">
-      <h2>...Loading</h2>
-    </div>
-  );
-}

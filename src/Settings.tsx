@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-const allPokemonTypes = ["normal", "water", "fire", "grass"];
-
 interface Settings {
   allLocationAreas: string[] | null;
   allPokemonTypes: string[] | null;
@@ -16,6 +14,7 @@ interface Settings {
 
 export function Settings({
   allLocationAreas,
+  allPokemonTypes,
   locationArea,
   setLocationArea,
   gender,
