@@ -45,7 +45,6 @@ export async function fetchAllPokemonTypes(): Promise<string[] | null> {
     return null;
   }
   const pokemonTypes = await response.json();
-  console.log(pokemonTypes);
   return pokemonTypes.results.map((typ: any) => typ.name);
 }
 
@@ -169,10 +168,12 @@ export function Pokemon({
   useEffect(() => {
     const loadData = async () => {
       setPokemon(null);
+      const minLoadTime = new Promise((resolve) => setTimeout(resolve, 200));
       try {
         const [fetchedPokemon, fetchedFirstName] = await Promise.all([
           fetchPokemonFromLocationArea(location, pokemonType),
           fetchFirstName(gender),
+          minLoadTime,
         ]);
 
         setPokemon(fetchedPokemon);
