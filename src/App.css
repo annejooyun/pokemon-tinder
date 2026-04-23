@@ -12,7 +12,6 @@ h1 {
   font-size: 2.5rem;
   color: white;
   margin-bottom: 40px;
-
 }
 
 h2 {
@@ -25,7 +24,7 @@ h3 {
 
 .heading-row {
   display: flex;
-  justify-content: center; 
+  justify-content: center;
   align-items: center;
   text-align: center;
 }
@@ -46,13 +45,13 @@ h3 {
   margin-right: 3px;
 }
 
-.profile-image{
+.profile-image {
   width: 200px;
   height: 200px;
   margin: 10px;
 }
 
-.container{
+.container {
   width: 100%;
   max-width: 400px;
   height: 550px;
@@ -71,7 +70,6 @@ h3 {
   padding-bottom: 60px;
 }
 
-
 ul {
   list-style-type: none;
   display: flex;
@@ -84,7 +82,7 @@ ul {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
-  grid-template-areas: 
+  grid-template-areas:
     "a    q-h"
     "a-li q";
 }
@@ -109,7 +107,7 @@ label {
   font-size: 1rem;
 }
 
-.settings-input{
+.settings-input {
   width: 50%;
   padding: 2px;
   margin: 2px;
@@ -142,8 +140,8 @@ label {
 
 .current-text {
   font-size: 0.7rem;
-  margin-top: '5px';
-  color: '#666';
+  margin-top: "5px";
+  color: "#666";
 }
 
 .action-buttons {
@@ -153,7 +151,8 @@ label {
   margin-top: 20px;
 }
 
-.like-button, .dislike-button {
+.like-button,
+.dislike-button {
   background: none;
   border: none;
   padding: 0;
@@ -162,15 +161,18 @@ label {
   size: scale(0.5);
 }
 
-.like-button:hover, .dislike-button:hover {
+.like-button:hover,
+.dislike-button:hover {
   transform: scale(1.2);
 }
 
-.like-button:active, .dislike-button:active {
+.like-button:active,
+.dislike-button:active {
   transform: scale(0.9);
 }
 
-.like-button img, .dislike-button img {
+.like-button img,
+.dislike-button img {
   width: 40px;
   height: 40px;
   display: block;
