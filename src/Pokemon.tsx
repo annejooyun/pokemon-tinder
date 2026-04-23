@@ -8,6 +8,12 @@ export type Pokemon = {
     imageURL?: string;
 }
 
+export type SeenPokemon = {
+    firstName: string;
+    pokemonName: string;
+    liked: true | false;
+}
+
 
 export async function fetchAllLocationAreas(): Promise<string[] | null> {
   const response = await fetch('https://pokeapi.co/api/v2/location-area/?limit=1000');
