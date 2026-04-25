@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "./App.css";
 import { Settings } from "./Settings";
 import * as P from "./Pokemon";
+import { Liked } from "./Liked";
 
 // Local storage for user preferences
 function useLocalStorage<T>(
@@ -140,7 +141,7 @@ function App() {
       codeBlock = <></>;
       break;
     case "liked":
-      codeBlock = <></>;
+      codeBlock = <Liked seenPokemon={seenPokemon} />;
       break;
   }
 
