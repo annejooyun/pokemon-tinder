@@ -215,6 +215,8 @@ export function Pokemon({
     );
   }, [location, gender, pokemonType]);
 
+  const [seenPokemon, setSeenPokemon] = useState<SeenPokemon[]>([]);
+
   // Loading screen
   if (!pokemon && !error) {
     return (
@@ -241,6 +243,17 @@ export function Pokemon({
   const handleLike = async () => {
     console.log("Liked!", pokemon.name);
     // Add to seen list with liked = true
+    const newSeenPokemon: SeenPokemon = {
+      firstName: firstName || "Unknown",
+      pokemonName: pokemon.name,
+      liked: true,
+    };
+
+    // Push to array
+    setSeenPokemon((prevSeen) => [...prevSeen, newSeenPokemon]);
+
+    console.log("All seen Pokemon:", [...seenPokemon, newSeenPokemon]);
+
     //Load new Pokemon
     loadNewPokemon(
       setPokemon,
@@ -256,6 +269,17 @@ export function Pokemon({
   const handleDislike = () => {
     console.log("Disliked!", pokemon.name);
     // Add to seen list with liked = false
+    const newSeenPokemon: SeenPokemon = {
+      firstName: firstName || "Unknown",
+      pokemonName: pokemon.name,
+      liked: false,
+    };
+
+    // Push to array by creating
+    setSeenPokemon((prevSeen) => [...prevSeen, newSeenPokemon]);
+
+    // Log to verify
+    console.log("All seen Pokemon:", [...seenPokemon, newSeenPokemon]);
     // Move to next Pokemon
     loadNewPokemon(
       setPokemon,
