@@ -111,7 +111,13 @@ function App() {
             seenPokemon={seenPokemon}
             setSeenPokemon={setSeenPokemon}
           />
-          <button onClick={() => setCurrentPage("settings")}>Settings</button>
+          <div className="buttonFooter">
+            <button onClick={() => setCurrentPage("settings")}>Settings</button>
+            <button onClick={() => setCurrentPage("liked")}>
+              Liked Pokemon
+            </button>
+            <button onClick={() => setCurrentPage("login")}>Log out</button>
+          </div>
         </>
       );
       break;
