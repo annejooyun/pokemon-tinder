@@ -1,20 +1,19 @@
 import { useState, useEffect } from "react";
 
-export type Pokemon = {
-  id: number;
+export interface Pokemon {
   name: string;
-  height: number;
-  weight: number;
-  types: string[];
-  locations: string[];
-  imageURL: string;
-};
+  height?: number;
+  weight?: number;
+  types?: string[];
+  location?: string;
+  imageURL?: string;
+}
 
-export type SeenPokemon = {
+export interface SeenPokemon extends Pokemon {
   firstName: string;
-  pokemonName: string;
+  joke: string;
   liked: true | false;
-};
+}
 
 interface PokemonInterface {
   location: string;
@@ -76,7 +75,7 @@ export async function fetchPokemonWithOptions(
 
     // Load all Pokemons in area
     const pokemonPromises = areaData.pokemon_encounters.map((x: any) =>
-      fetchPokemon(x.pokemon.name),
+      fetchPokemon(x.pokemon.name, location),
     );
     const allPokemon = await Promise.all(pokemonPromises);
 
@@ -100,32 +99,25 @@ export async function fetchPokemonWithOptions(
   }
 }
 
-async function fetchPokemon(name: string): Promise<Pokemon | null> {
+async function fetchPokemon(
+  name: string,
+  location: string,
+): Promise<Pokemon | null> {
   try {
-    const response_1 = await fetch(
-      `https://pokeapi.co/api/v2/pokemon/${name}/`,
-    );
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
 
-    if (!response_1.ok) {
-      console.error(`Error: ${response_1.status}`);
+    if (!response.ok) {
+      console.error(`Error: ${response.status}`);
       return null;
     }
-    const pokemon = await response_1.json();
-
-    const response_2 = await fetch(pokemon.location_area_encounters);
-    if (!response_2.ok) {
-      console.error(`Error: ${response_2.status}`);
-      return null;
-    }
-    const encounters = await response_2.json();
+    const pokemon = await response.json();
 
     return {
-      id: pokemon["id"],
       name: pokemon["name"],
       height: pokemon["height"],
       weight: pokemon["weight"],
       types: pokemon.types.map((t: any) => t.type.name),
-      locations: encounters.map((e: any) => e.location_area.name),
+      location: location,
       imageURL: pokemon["sprites"]["front_default"],
     };
   } catch (error) {
@@ -229,7 +221,13 @@ export function Pokemon({
   }
 
   if (pokemon === null) {
-    console.error(`Failed to fetch Pokemon`);
+    console.error("Failed to fetch Pokemon.");
+    return null;
+  } else if (firstName === null) {
+    console.error("Failed to fetch first name.");
+    return null;
+  } else if (joke === null) {
+    console.error("Failed to fetch joke.");
     return null;
   }
 
@@ -246,8 +244,14 @@ export function Pokemon({
     console.log("Liked!", pokemon.name);
     // Add to seen list with liked = true
     const newSeenPokemon: SeenPokemon = {
+      name: pokemon.name,
+      height: pokemon.height,
+      weight: pokemon.weight,
+      types: pokemon.types,
+      location: pokemon.location,
+      imageURL: pokemon.imageURL,
       firstName: firstName || "Unknown",
-      pokemonName: pokemon.name,
+      joke: joke,
       liked: true,
     };
 
@@ -272,8 +276,9 @@ export function Pokemon({
     console.log("Disliked!", pokemon.name);
     // Add to seen list with liked = false
     const newSeenPokemon: SeenPokemon = {
+      name: pokemon.name,
       firstName: firstName || "Unknown",
-      pokemonName: pokemon.name,
+      joke: joke,
       liked: false,
     };
 
