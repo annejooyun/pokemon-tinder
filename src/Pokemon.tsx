@@ -22,6 +22,8 @@ interface PokemonInterface {
   gender: string;
   error: string | null;
   setError: (value: string) => void;
+  seenPokemon: SeenPokemon[];
+  setSeenPokemon: (value: SeenPokemon[]) => void;
 }
 
 export async function fetchAllLocationAreas(): Promise<string[] | null> {
@@ -197,6 +199,8 @@ export function Pokemon({
   gender,
   error,
   setError,
+  seenPokemon,
+  setSeenPokemon,
 }: PokemonInterface) {
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
   const [firstName, setFirstName] = useState<string | null>(null);
@@ -214,8 +218,6 @@ export function Pokemon({
       setError,
     );
   }, [location, gender, pokemonType]);
-
-  const [seenPokemon, setSeenPokemon] = useState<SeenPokemon[]>([]);
 
   // Loading screen
   if (!pokemon && !error) {
@@ -250,7 +252,7 @@ export function Pokemon({
     };
 
     // Push to array
-    setSeenPokemon((prevSeen) => [...prevSeen, newSeenPokemon]);
+    setSeenPokemon([...seenPokemon, newSeenPokemon]);
 
     console.log("All seen Pokemon:", [...seenPokemon, newSeenPokemon]);
 
@@ -276,7 +278,7 @@ export function Pokemon({
     };
 
     // Push to array by creating
-    setSeenPokemon((prevSeen) => [...prevSeen, newSeenPokemon]);
+    setSeenPokemon([...seenPokemon, newSeenPokemon]);
 
     // Log to verify
     console.log("All seen Pokemon:", [...seenPokemon, newSeenPokemon]);

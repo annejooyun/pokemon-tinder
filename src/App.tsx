@@ -22,9 +22,9 @@ function useLocalStorage<T>(
 
 function App() {
   // UI state
-  const [currentPage, setCurrentPage] = useState<"app" | "settings" | "login">(
-    "app",
-  );
+  const [currentPage, setCurrentPage] = useState<
+    "app" | "settings" | "liked" | "login"
+  >("app");
   const [error, setError] = useState<string | null>(null);
 
   // Pokemon data
@@ -32,6 +32,7 @@ function App() {
   const [allLocationAreas, setAllLocationAreas] = useState<string[] | null>(
     null,
   );
+  const [seenPokemon, setSeenPokemon] = useState<P.SeenPokemon[]>([]);
 
   // User preferences
   const [locationArea, setLocationArea] = useLocalStorage(
@@ -60,7 +61,7 @@ function App() {
     load();
   }, []);
 
-  //load all Pokemon types once
+  // Load all Pokemon types once
   useEffect(() => {
     const load = async () => {
       try {
@@ -88,6 +89,13 @@ function App() {
     localStorage.setItem("pokemon-type", pokemonType);
   }, [pokemonType]);
 
+  // Save seen Pokemon whenever it changes
+  useEffect(() => {
+    if (seenPokemon.length > 0) {
+      localStorage.setItem("seen-pokemon", JSON.stringify(seenPokemon));
+    }
+  }, [seenPokemon]);
+
   let codeBlock = null;
 
   switch (currentPage) {
@@ -100,6 +108,8 @@ function App() {
             gender={gender}
             error={error}
             setError={setError}
+            seenPokemon={seenPokemon}
+            setSeenPokemon={setSeenPokemon}
           />
           <button onClick={() => setCurrentPage("settings")}>Settings</button>
         </>
@@ -121,6 +131,9 @@ function App() {
       );
       break;
     case "login":
+      codeBlock = <></>;
+      break;
+    case "liked":
       codeBlock = <></>;
       break;
   }
