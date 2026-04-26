@@ -1,30 +1,51 @@
+import { useState } from "react";
 import type { SeenPokemon } from "./Pokemon";
 
 interface seenPokemonInterface {
   seenPokemon: SeenPokemon[];
+  setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void;
 }
 
-export function Liked({ seenPokemon }: seenPokemonInterface) {
-  let indx = 0;
-  let maxIndx = 0;
-  let codeBlock = null;
-  if (!seenPokemon) {
-    codeBlock = <p>No liked pokemon yet.</p>;
+function handleBack(
+  currentIndx: number,
+  likedPokemonList: SeenPokemon[],
+): number {
+  if (currentIndx === 0) {
+    const maxIndx = likedPokemonList.length;
+    return maxIndx - 1;
   } else {
-    function handleBack() {
-      indx -= 1;
-    }
-    function handleNext() {
-      indx += 1;
-    }
+    return currentIndx - 1;
+  }
+}
+
+function handleNext(
+  currentIndx: number,
+  likedPokemonList: SeenPokemon[],
+): number {
+  const maxIndx = likedPokemonList.length;
+  if (currentIndx === maxIndx - 1) {
+    return 0;
+  } else {
+    return currentIndx + 1;
+  }
+}
+
+export function Liked({ seenPokemon, setCurrentPage }: seenPokemonInterface) {
+  const [indx, setIndx] = useState(0);
+  let codeBlock = null;
+
+  if (seenPokemon.length === 0) {
+    codeBlock = <h3>No liked pokemon yet.</h3>;
+  } else {
     const likedPokemon = seenPokemon.filter((item) => item.liked === true);
     const likedPokemonList = likedPokemon.map((item) => item);
+
     codeBlock = (
       <>
         <h2 className="name">{likedPokemonList[indx].name}</h2>
         <div className="location-row">
           <img className="house-image" src="../home.png"></img>
-          <h3>Lives in {likedPokemonList[indx].locations}</h3>
+          <h3>Lives in {likedPokemonList[indx].location}</h3>
         </div>
         <br />
         <img className="profile-image" src={likedPokemonList[indx].imageURL} />
@@ -42,11 +63,17 @@ export function Liked({ seenPokemon }: seenPokemonInterface) {
           </div>
 
           <div className="action-buttons">
-            <button className="back-button" onClick={handleBack}>
-              <img src="../dislike.png" alt="Dislike" />
+            <button
+              className="action-button"
+              onClick={() => setIndx(handleBack(indx, likedPokemonList))}
+            >
+              <img src="../back.png" alt="Previous Pokemon" />
             </button>
-            <button className="like-button" onClick={handleNext}>
-              <img src="../like.png" alt="Like" />
+            <button
+              className="action-button"
+              onClick={() => setIndx(handleNext(indx, likedPokemonList))}
+            >
+              <img src="../next.png" alt="Next Pokemon" />
             </button>
           </div>
         </div>
@@ -54,9 +81,16 @@ export function Liked({ seenPokemon }: seenPokemonInterface) {
     );
   }
   return (
-    <div className="container">
-      <h2>Liked Pokemon</h2>
-      {codeBlock}
-    </div>
+    <>
+      <div className="container">
+        <h2>Liked Pokemon</h2>
+        {codeBlock}
+      </div>
+      <div className="buttonFooter">
+        <button onClick={() => setCurrentPage("settings")}>Settings</button>
+        <button onClick={() => setCurrentPage("app")}>Back to app</button>
+        <button onClick={() => setCurrentPage("login")}>Log out</button>
+      </div>
+    </>
   );
 }

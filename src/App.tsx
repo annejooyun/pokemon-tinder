@@ -141,7 +141,9 @@ function App() {
       codeBlock = <></>;
       break;
     case "liked":
-      codeBlock = <Liked seenPokemon={seenPokemon} />;
+      codeBlock = (
+        <Liked seenPokemon={seenPokemon} setCurrentPage={setCurrentPage} />
+      );
       break;
   }
 

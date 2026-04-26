@@ -326,10 +326,10 @@ export function Pokemon({
           </div>
 
           <div className="action-buttons">
-            <button className="dislike-button" onClick={handleDislike}>
+            <button className="action-button" onClick={handleDislike}>
               <img src="../dislike.png" alt="Dislike" />
             </button>
-            <button className="like-button" onClick={handleLike}>
+            <button className="action-button" onClick={handleLike}>
               <img src="../like.png" alt="Like" />
             </button>
           </div>
