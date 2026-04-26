@@ -313,8 +313,6 @@ export function Pokemon({
         <br />
         <img className="profile-image" src={pokemon.imageURL} />
         <div className="stats">
-          <div className="row"></div>
-          <div className="row">
             <h3 className="about-header">About me</h3>
             <ul className="about-list">
               <li>Height: {pokemon.height} dm</li>
@@ -323,7 +321,6 @@ export function Pokemon({
             </ul>
             <h3 className="quote-header">Quote</h3>
             <p className="quote"> {joke} </p>
-          </div>
 
           <div className="action-buttons">
             <button className="action-button" onClick={handleDislike}>

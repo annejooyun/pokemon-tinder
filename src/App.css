@@ -70,6 +70,14 @@ h3 {
   padding-bottom: 60px;
 }
 
+.stats {
+  max-height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+
+}
+
 ul {
   list-style-type: none;
   display: flex;
@@ -78,29 +86,8 @@ ul {
   height: 100%;
 }
 
-.row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  grid-template-areas:
-    "a    q-h"
-    "a-li q";
-}
-
-.about-header {
-  grid-area: a;
-}
-
-.about-list {
-  grid-area: a-li;
-}
-
 .quote-header {
-  grid-area: q-h;
-}
-
-.quote {
-  grid-area: q;
+  margin-top: 1rem;
 }
 
 label {
