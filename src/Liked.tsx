@@ -40,12 +40,20 @@ export function Liked({ seenPokemon, setCurrentPage }: seenPokemonInterface) {
     const likedPokemon = seenPokemon.filter((item) => item.liked === true);
     const likedPokemonList = likedPokemon.map((item) => item);
 
+    // Format data for display
+    const pokemonName =
+      likedPokemonList[indx].name.charAt(0).toUpperCase() +
+      likedPokemonList[indx].name.slice(1);
+    const fullName = likedPokemonList[indx].firstName + " the " + pokemonName;
+    let location = likedPokemon[indx].location.replaceAll("-", " ");
+    location = location.charAt(0).toUpperCase() + location.slice(1);
+
     codeBlock = (
       <>
-        <h2 className="name">{likedPokemonList[indx].name}</h2>
+        <h2 className="name">{fullName}</h2>
         <div className="location-row">
           <img className="house-image" src="../home.png"></img>
-          <h3>Lives in {likedPokemonList[indx].location}</h3>
+          <h3>Lives in {location}</h3>
         </div>
         <br />
         <img className="profile-image" src={likedPokemonList[indx].imageURL} />
