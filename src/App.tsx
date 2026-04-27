@@ -43,7 +43,7 @@ function App() {
   // User preferences
   const [locationArea, setLocationArea] = useLocalStorage(
     "pokemon-location-area",
-    "canalave-city-are",
+    "canalave-city-area",
   );
   const [gender, setGender] = useLocalStorage<"male" | "female" | "both">(
     "pokemon-gender",
