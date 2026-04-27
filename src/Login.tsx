@@ -14,7 +14,7 @@ function validateLogin(
 ) {
   const user = allUsers.find((u) => u.username === username);
   if (!user) {
-    setError(new Error(`No user with username ${username}`));
+    setError(new Error(`No user with username "${username}"`));
     return;
   } else {
     if (user.password === password) {
@@ -30,10 +30,24 @@ function validateLogin(
 function saveUser(
   username: string,
   password: string,
+  setError: (value: Error) => void,
   allUsers: user[],
   setAllUsers: (value: user[]) => void,
   setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void,
 ): void {
+  if (username.length === 0 && password.length === 0) {
+    setError(new Error("Username and password cannot be empty"));
+    return;
+  }
+  if (username.length === 0) {
+    setError(new Error("Username cannot be empty"));
+    return;
+  }
+  if (password.length === 0) {
+    setError(new Error("Password cannot be empty"));
+    return;
+  }
+
   const newUser: user = { username: username, password: password };
   setAllUsers([...allUsers, newUser]);
   setCurrentPage("app");
@@ -95,7 +109,14 @@ export function Login({
           className="sign-up"
           onClick={() => {
             setSignUp(false);
-            saveUser(username, password, allUsers, setAllUsers, setCurrentPage);
+            saveUser(
+              username,
+              password,
+              setError,
+              allUsers,
+              setAllUsers,
+              setCurrentPage,
+            );
           }}
         >
           SIGN UP
