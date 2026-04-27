@@ -113,6 +113,7 @@ export function Login({
             value={username}
             onChange={handleUsernameInput}
             placeholder="Username"
+            className="username-input"
             required
           ></input>
           <input
@@ -120,6 +121,7 @@ export function Login({
             value={password}
             onChange={handlePasswordInput}
             placeholder="Password"
+            className="password-input"
             required
           ></input>
         </div>

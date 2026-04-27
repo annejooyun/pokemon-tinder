@@ -177,4 +177,13 @@ label {
 
 .input-container {
   display: block;
+  margin-top: 200px;
+}
+
+.username-input,
+.password-input {
+  width: 50%;
+  font-size: 1rem;
+  margin: 5px;
+  text-align: center;
 }
