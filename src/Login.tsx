@@ -10,17 +10,18 @@ function validateLogin(
   password: string,
   allUsers: user[],
   setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void,
+  setError: (value: Error | null) => void,
 ) {
   const user = allUsers.find((u) => u.username === username);
   if (!user) {
-    console.log(`No user with username ${username}`);
+    setError(new Error(`No user with username ${username}`));
     return;
   } else {
     if (user.password === password) {
       setCurrentPage("app");
       return;
     } else {
-      console.log("Wrong password");
+      setError(new Error(`Wrong password`));
       return;
     }
   }
@@ -52,6 +53,7 @@ export function Login({
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [signUp, setSignUp] = useState<boolean>(false);
+  const [error, setError] = useState<Error | null>(null);
 
   const handleUsernameInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -68,9 +70,15 @@ export function Login({
         <button
           className="submit"
           type="submit"
-          onClick={() =>
-            validateLogin(username, password, allUsers, setCurrentPage)
-          }
+          onClick={() => {
+            validateLogin(
+              username,
+              password,
+              allUsers,
+              setCurrentPage,
+              setError,
+            );
+          }}
         >
           LOG IN
         </button>
@@ -97,24 +105,28 @@ export function Login({
   }
 
   return (
-    <div className="container">
-      <div className="input-container">
-        <input
-          type="text"
-          value={username}
-          onChange={handleUsernameInput}
-          placeholder="Username"
-          required
-        ></input>
-        <input
-          type="password"
-          value={password}
-          onChange={handlePasswordInput}
-          placeholder="Password"
-          required
-        ></input>
+    <>
+      <div className="container">
+        <div className="input-container">
+          <input
+            type="text"
+            value={username}
+            onChange={handleUsernameInput}
+            placeholder="Username"
+            required
+          ></input>
+          <input
+            type="password"
+            value={password}
+            onChange={handlePasswordInput}
+            placeholder="Password"
+            required
+          ></input>
+        </div>
+
+        {codeBlock}
+        {error && <p>{`Error: ${error.message}`}</p>}
       </div>
-      {codeBlock}
-    </div>
+    </>
   );
 }
