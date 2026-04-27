@@ -3,6 +3,7 @@ import "./App.css";
 import { Settings } from "./Settings";
 import * as P from "./Pokemon";
 import { Liked } from "./Liked";
+import { Login } from "./Login";
 
 // Local storage for user preferences
 function useLocalStorage<T>(
@@ -138,7 +139,7 @@ function App() {
       );
       break;
     case "login":
-      codeBlock = <></>;
+      codeBlock = <Login setCurrentPage={setCurrentPage} />;
       break;
     case "liked":
       codeBlock = (
