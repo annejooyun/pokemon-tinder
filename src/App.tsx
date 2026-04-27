@@ -4,6 +4,7 @@ import { Settings } from "./Settings";
 import * as P from "./Pokemon";
 import { Liked } from "./Liked";
 import { Login } from "./Login";
+import type { user } from "./Login";
 
 // Local storage for user preferences
 function useLocalStorage<T>(
@@ -23,6 +24,9 @@ function useLocalStorage<T>(
 }
 
 function App() {
+  // Users
+  const [allUsers, setAllUsers] = useState<user[]>([]);
+
   // UI state
   const [currentPage, setCurrentPage] = useState<
     "app" | "settings" | "liked" | "login"
@@ -75,6 +79,11 @@ function App() {
     };
     load();
   }, []);
+
+  // Save new users to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("users", allUsers);
+  }, [allUsers]);
 
   // Save location area to localStorage whenever it changes
   useEffect(() => {
@@ -139,7 +148,13 @@ function App() {
       );
       break;
     case "login":
-      codeBlock = <Login setCurrentPage={setCurrentPage} />;
+      codeBlock = (
+        <Login
+          setCurrentPage={setCurrentPage}
+          allUsers={allUsers}
+          setAllUsers={setAllUsers}
+        />
+      );
       break;
     case "liked":
       codeBlock = (

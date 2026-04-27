@@ -1,20 +1,16 @@
 import { React, useState } from "react";
 
-type user = {
+export type user = {
   username: string;
   password: string;
 };
 
-interface LoginInterface {
-  setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void;
-}
-
-let allUsers = [
-  { username: "AJ", password: "Mabel" },
-  { username: "Herman", password: "Mabel1" },
-];
-
-function validateLogin(username: string, password: string, setCurrentPage) {
+function validateLogin(
+  username: string,
+  password: string,
+  allUsers: user[],
+  setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void,
+) {
   const user = allUsers.find((u) => u.username === username);
   if (!user) {
     console.log(`No user with username ${username}`);
@@ -30,9 +26,32 @@ function validateLogin(username: string, password: string, setCurrentPage) {
   }
 }
 
-export function Login({ setCurrentPage }: LoginInterface) {
+function saveUser(
+  username: string,
+  password: string,
+  allUsers: user[],
+  setAllUsers: (value: user[]) => void,
+  setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void,
+): void {
+  const newUser: user = { username: username, password: password };
+  setAllUsers([...allUsers, newUser]);
+  setCurrentPage("app");
+}
+
+interface LoginInterface {
+  setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void;
+  allUsers: user[];
+  setAllUsers: (value: user[]) => void;
+}
+
+export function Login({
+  setCurrentPage,
+  allUsers,
+  setAllUsers,
+}: LoginInterface) {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [signUp, setSignUp] = useState<boolean>(false);
 
   const handleUsernameInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUsername(event.target.value);
@@ -41,6 +60,41 @@ export function Login({ setCurrentPage }: LoginInterface) {
   const handlePasswordInput = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.target.value);
   };
+
+  let codeBlock = null;
+  if (!signUp) {
+    codeBlock = (
+      <>
+        <button
+          className="submit"
+          type="submit"
+          onClick={() =>
+            validateLogin(username, password, allUsers, setCurrentPage)
+          }
+        >
+          LOG IN
+        </button>
+
+        <button className="sign-up" onClick={() => setSignUp(true)}>
+          SIGN UP
+        </button>
+      </>
+    );
+  } else {
+    codeBlock = (
+      <>
+        <button
+          className="sign-up"
+          onClick={() => {
+            setSignUp(false);
+            saveUser(username, password, allUsers, setAllUsers, setCurrentPage);
+          }}
+        >
+          SIGN UP
+        </button>
+      </>
+    );
+  }
 
   return (
     <div className="container">
@@ -60,19 +114,7 @@ export function Login({ setCurrentPage }: LoginInterface) {
           required
         ></input>
       </div>
-
-      <div className="botton">
-        <button
-          className="submit"
-          type="submit"
-          onClick={() => validateLogin(username, password, setCurrentPage)}
-        >
-          LOG IN
-        </button>
-      </div>
-      <div className="signup">
-        Don't Have An Account?<a href="signup.html"> sign up</a>
-      </div>
+      {codeBlock}
     </div>
   );
 }
