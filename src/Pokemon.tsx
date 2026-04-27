@@ -181,8 +181,14 @@ async function fetchRandomChuckNorrisJoke() {
     throw new Error(`Fetch Chuch Norris joke failed: ${response.status}`);
   }
 
-  const joke = await response.json();
-  return joke.value;
+  let joke = await response.json();
+  joke = joke.value;
+
+  if (joke.length > 250) {
+    joke = fetchRandomChuckNorrisJoke();
+  }
+
+  return joke;
 }
 
 export function Pokemon({
@@ -306,21 +312,23 @@ export function Pokemon({
     codeBlock = (
       <div className="container">
         <h2 className="name">{fullName}</h2>
+
         <div className="location-row">
           <img className="house-image" src="../home.png"></img>
           <h3>Lives in {location_}</h3>
         </div>
-        <br />
+
         <img className="profile-image" src={pokemon.imageURL} />
+
         <div className="stats">
-            <h3 className="about-header">About me</h3>
-            <ul className="about-list">
-              <li>Height: {pokemon.height} dm</li>
-              <li>Weight: {pokemon.weight} hg</li>
-              <li>Type(s): {pokemon.types.join(", ")}</li>
-            </ul>
-            <h3 className="quote-header">Quote</h3>
-            <p className="quote"> {joke} </p>
+          <h3 className="about-header">About me</h3>
+          <ul className="about-list">
+            <li>Height: {pokemon.height} dm</li>
+            <li>Weight: {pokemon.weight} hg</li>
+            <li>Type(s): {pokemon.types.join(", ")}</li>
+          </ul>
+          <h3 className="quote-header">Quote</h3>
+          <p className="quote"> {joke} </p>
 
           <div className="action-buttons">
             <button className="action-button" onClick={handleDislike}>

@@ -16,13 +16,15 @@ h1 {
 
 h2 {
   margin: 10px;
+  font-size: 1.5rem;
 }
 
 h3 {
   font-size: 1rem;
 }
 
-.heading-row {
+.heading-row,
+.like-row {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -52,12 +54,11 @@ h3 {
 }
 
 .container {
-  width: 100%;
-  max-width: 400px;
-  height: 650px;
+  width: 500px;
+  height: 600px;
   border: 1px solid #ccc;
   border-radius: 12px;
-  padding: 20px;
+  padding: 10px;
   background: white;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
@@ -74,8 +75,9 @@ h3 {
   max-height: auto;
   display: flex;
   flex-direction: column;
-  justify-content: space-evenly;
-
+  justify-content: space-between;
+  flex: 1;
+  min-height: 0;
 }
 
 ul {
@@ -88,6 +90,10 @@ ul {
 
 .quote-header {
   margin-top: 1rem;
+}
+
+.quote {
+  height: 4rem;
 }
 
 label {
@@ -135,7 +141,7 @@ label {
   display: flex;
   justify-content: center;
   gap: 40px;
-  margin-top: 20px;
+  margin-top: auto;
 }
 
 .action-button {
@@ -160,4 +166,11 @@ label {
   height: 40px;
   display: block;
   pointer-events: none;
+}
+
+.liked-heart {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 10px;
+  margin-right: 0;
 }
