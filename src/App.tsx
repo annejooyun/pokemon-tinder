@@ -31,7 +31,7 @@ function App() {
   const [currentPage, setCurrentPage] = useState<
     "app" | "settings" | "liked" | "login"
   >("login");
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   // Pokemon data
   const [allPokemonTypes, setAllPokemonTypes] = useState<string[] | null>(null);
@@ -56,10 +56,10 @@ function App() {
   useEffect(() => {
     const load = async () => {
       try {
-        const areas = await P.fetchAllLocations();
+        const areas = await P.fetchAllLocations(setError);
         setAllLocations(areas);
       } catch (error) {
-        console.error(`Falied to load location areas: ${error}`);
+        setError(new Error(`Falied to load location areas: ${error}`));
       }
     };
     load();
@@ -69,10 +69,10 @@ function App() {
   useEffect(() => {
     const load = async () => {
       try {
-        const types = await P.fetchAllPokemonTypes();
+        const types = await P.fetchAllPokemonTypes(setError);
         setAllPokemonTypes(types);
       } catch (error) {
-        console.error(`Failed to load Pokemon types ${error}`);
+        setError(new Error(`Failed to load Pokemon types ${error}`));
       }
     };
     load();
@@ -85,7 +85,7 @@ function App() {
       try {
         setAllUsers(JSON.parse(saved));
       } catch (error) {
-        console.error("Failed to load users:", error);
+        setError(new Error(`Failed to load users: ${error}`));
       }
     }
   }, []);

@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+type ErrorSetter = (value: Error | null) => void;
+
 export interface Pokemon {
   name: string;
   height?: number;
@@ -19,28 +21,32 @@ interface PokemonInterface {
   location: string;
   pokemonType: string;
   gender: string;
-  error: string | null;
-  setError: (value: string) => void;
+  error: Error | null;
+  setError: ErrorSetter;
   seenPokemon: SeenPokemon[];
   setSeenPokemon: (value: SeenPokemon[]) => void;
 }
 
-export async function fetchAllLocations(): Promise<string[] | null> {
+export async function fetchAllLocations(
+  setError: ErrorSetter,
+): Promise<string[] | null> {
   const response = await fetch(
     "https://pokeapi.co/api/v2/location-area/?limit=1000",
   );
   if (!response.ok) {
-    console.error(`Error: ${response.status}`);
+    setError(new Error(`Error: ${response.status}`));
     return null;
   }
   const locations = await response.json();
   return locations.results.map((loc: any) => loc.name);
 }
 
-export async function fetchAllPokemonTypes(): Promise<string[] | null> {
+export async function fetchAllPokemonTypes(
+  setError: ErrorSetter,
+): Promise<string[] | null> {
   const response = await fetch("https://pokeapi.co/api/v2/type/");
   if (!response.ok) {
-    console.error(`Error: ${response.status}`);
+    setError(new Error(`Error: ${response.status}`));
     return null;
   }
   const pokemonTypes = await response.json();
@@ -50,6 +56,7 @@ export async function fetchAllPokemonTypes(): Promise<string[] | null> {
 export async function fetchPokemonWithOptions(
   location: string,
   pokemonType: string,
+  setError: ErrorSetter,
 ): Promise<Pokemon | null> {
   const formattedLocation = location.toLowerCase().replace(/ /g, "-");
 
@@ -60,7 +67,7 @@ export async function fetchPokemonWithOptions(
     const response = await fetch(areaUrl);
 
     if (!response.ok) {
-      console.error(`Location-area not found: ${response.status}`);
+      setError(new Error(`Location-area not found: ${response.status}`));
       return null;
     }
     const areaData = await response.json();
@@ -69,13 +76,13 @@ export async function fetchPokemonWithOptions(
       !areaData.pokemon_encounters ||
       areaData.pokemon_encounters.length === 0
     ) {
-      console.error("No Pokemon in this area");
+      setError(new Error("No Pokemon in this area"));
       return null;
     }
 
     // Load all Pokemons in area
     const pokemonPromises = areaData.pokemon_encounters.map((x: any) =>
-      fetchPokemon(x.pokemon.name, location),
+      fetchPokemon(x.pokemon.name, location, setError),
     );
     const allPokemon = await Promise.all(pokemonPromises);
 
@@ -85,7 +92,7 @@ export async function fetchPokemonWithOptions(
     );
 
     if (filteredPokemon.length === 0) {
-      console.error(`No ${pokemonType} type Pokemon in this area`);
+      setError(new Error(`No ${pokemonType} type Pokemon in this area`));
       return null;
     }
 
@@ -94,7 +101,7 @@ export async function fetchPokemonWithOptions(
 
     return filteredPokemon[randomIndex];
   } catch (error) {
-    console.error(`Fetch Pokemon from location area failed: ${error}`);
+    setError(new Error(`Fetch Pokemon from location area failed: ${error}`));
     return null;
   }
 }
@@ -102,12 +109,13 @@ export async function fetchPokemonWithOptions(
 async function fetchPokemon(
   name: string,
   location: string,
+  setError: ErrorSetter,
 ): Promise<Pokemon | null> {
   try {
     const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}/`);
 
     if (!response.ok) {
-      console.error(`Error: ${response.status}`);
+      setError(new Error(`Error: ${response.status}`));
       return null;
     }
     const pokemon = await response.json();
@@ -121,7 +129,7 @@ async function fetchPokemon(
       imageURL: pokemon["sprites"]["front_default"],
     };
   } catch (error) {
-    console.error(`Fetch Pokemon failed: ${error}`);
+    setError(new Error(`Fetch Pokemon failed: ${error}`));
     return null;
   }
 }
@@ -133,29 +141,37 @@ async function loadNewPokemon(
   gender: string,
   setFirstName: (value: string) => void,
   setJoke: (value: string) => void,
-  setError: (value: string) => void,
+  setError: ErrorSetter,
+  setIsLoading: (value: boolean) => void,
 ) {
+  setIsLoading(true);
+  setError(null);
   setPokemon(null);
+  setFirstName("");
+  setJoke("");
   const minLoadTime = new Promise((resolve) => setTimeout(resolve, 200));
   try {
     const [fetchedPokemon, fetchedFirstName, fetchedJoke] = await Promise.all([
-      fetchPokemonWithOptions(location, pokemonType),
-      fetchFirstName(gender),
-      fetchRandomChuckNorrisJoke(),
+      fetchPokemonWithOptions(location, pokemonType, setError),
+      fetchFirstName(gender, setError),
+      fetchRandomChuckNorrisJoke(setError),
       minLoadTime,
     ]);
 
     setPokemon(fetchedPokemon);
     setFirstName(fetchedFirstName);
     setJoke(fetchedJoke);
-    setError("");
   } catch (err) {
-    console.error("Fetch error:", err);
-    setError("Failed to fetch new Pokemon");
+    setError(new Error(`Fetch error: ${err}`));
+  } finally {
+    setIsLoading(false);
   }
 }
 
-async function fetchFirstName(gender: string): Promise<string> {
+async function fetchFirstName(
+  gender: string,
+  setError: ErrorSetter,
+): Promise<string> {
   let url = "";
   if (gender === "both") {
     url = `https://randomuser.me/api/?nat=US`;
@@ -167,25 +183,31 @@ async function fetchFirstName(gender: string): Promise<string> {
   const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error(`Fetch first name failed: ${response.status}`);
+    const error = new Error(`Fetch first name failed: ${response.status}`);
+    setError(error);
+    throw error;
   }
 
   const user = await response.json();
   return user.results[0].name.first;
 }
 
-async function fetchRandomChuckNorrisJoke() {
+async function fetchRandomChuckNorrisJoke(setError: ErrorSetter) {
   const response = await fetch(`https://api.chucknorris.io/jokes/random`);
 
   if (!response.ok) {
-    throw new Error(`Fetch Chuch Norris joke failed: ${response.status}`);
+    const error = new Error(
+      `Fetch Chuck Norris joke failed: ${response.status}`,
+    );
+    setError(error);
+    throw error;
   }
 
   let joke = await response.json();
   joke = joke.value;
 
   if (joke.length > 250) {
-    joke = await fetchRandomChuckNorrisJoke();
+    joke = await fetchRandomChuckNorrisJoke(setError);
   }
 
   return joke;
@@ -201,8 +223,9 @@ export function Pokemon({
   setSeenPokemon,
 }: PokemonInterface) {
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
-  const [firstName, setFirstName] = useState<string | null>(null);
-  const [joke, setJoke] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState<string>("");
+  const [joke, setJoke] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
 
   // Update pokemon if location, gender or type changes
   useEffect(() => {
@@ -214,11 +237,12 @@ export function Pokemon({
       setFirstName,
       setJoke,
       setError,
+      setIsLoading,
     );
   }, [location, gender, pokemonType]);
 
   // Loading screen
-  if (!pokemon && !error) {
+  if (isLoading) {
     return (
       <div className="container">
         <h2>...Loading</h2>
@@ -226,14 +250,18 @@ export function Pokemon({
     );
   }
 
-  if (pokemon === null) {
-    console.error("Failed to fetch Pokemon.");
-    return null;
-  } else if (firstName === null) {
-    console.error("Failed to fetch first name.");
-    return null;
-  } else if (joke === null) {
-    console.error("Failed to fetch joke.");
+  if (error) {
+    return (
+      <div className="container error-container">
+        <h3
+          className="error"
+          style={{ color: "red" }}
+        >{`Error: ${error.message}`}</h3>
+      </div>
+    );
+  }
+
+  if (pokemon === null || firstName === "" || joke === "") {
     return null;
   }
 
@@ -271,6 +299,7 @@ export function Pokemon({
       setFirstName,
       setJoke,
       setError,
+      setIsLoading,
     );
   };
 
@@ -287,46 +316,40 @@ export function Pokemon({
       setFirstName,
       setJoke,
       setError,
+      setIsLoading,
     );
   };
 
-  let codeBlock = null;
-  if (error) {
-    codeBlock = <p style={{ color: "red" }}>{error}</p>;
-  } else {
-    codeBlock = (
-      <div className="container">
-        <h2 className="name">{fullName}</h2>
+  return (
+    <div className="container">
+      <h2 className="name">{fullName}</h2>
 
-        <div className="location-row">
-          <img className="house-image" src="../home.png"></img>
-          <h3>Lives in {location_}</h3>
-        </div>
-
-        <img className="profile-image" src={pokemon.imageURL} />
-
-        <div className="stats">
-          <h3 className="about-header">About me</h3>
-          <ul className="about-list">
-            <li>Height: {pokemon.height} dm</li>
-            <li>Weight: {pokemon.weight} hg</li>
-            <li>Type(s): {pokemon.types.join(", ")}</li>
-          </ul>
-          <h3 className="quote-header">Quote</h3>
-          <p className="quote"> {joke} </p>
-
-          <div className="action-buttons">
-            <button className="action-button" onClick={handleDislike}>
-              <img src="../dislike.png" alt="Dislike" />
-            </button>
-            <button className="action-button" onClick={handleLike}>
-              <img src="../like.png" alt="Like" />
-            </button>
-          </div>
-        </div>
-        <br />
+      <div className="location-row">
+        <img className="house-image" src="../home.png"></img>
+        <h3>Lives in {location_}</h3>
       </div>
-    );
-  }
-  return codeBlock;
+
+      <img className="profile-image" src={pokemon.imageURL} />
+
+      <div className="stats">
+        <h3 className="about-header">About me</h3>
+        <ul className="about-list">
+          <li>Height: {pokemon.height} dm</li>
+          <li>Weight: {pokemon.weight} hg</li>
+          <li>Type(s): {pokemon.types?.join(", ") ?? "Unknown"}</li>
+        </ul>
+        <h3 className="quote-header">Quote</h3>
+        <p className="quote"> {joke} </p>
+
+        <div className="action-buttons">
+          <button className="action-button" onClick={handleDislike}>
+            <img src="../dislike.png" alt="Dislike" />
+          </button>
+          <button className="action-button" onClick={handleLike}>
+            <img src="../like.png" alt="Like" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }

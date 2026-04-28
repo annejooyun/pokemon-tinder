@@ -187,3 +187,10 @@ label {
   margin: 5px;
   text-align: center;
 }
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
