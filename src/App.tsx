@@ -30,7 +30,7 @@ function App() {
   // UI state
   const [currentPage, setCurrentPage] = useState<
     "app" | "settings" | "liked" | "login"
-  >("app");
+  >("login");
   const [error, setError] = useState<string | null>(null);
 
   // Pokemon data
