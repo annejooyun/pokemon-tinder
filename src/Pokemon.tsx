@@ -12,7 +12,7 @@ export interface Pokemon {
 export interface SeenPokemon extends Pokemon {
   firstName: string;
   joke: string;
-  liked: true | false;
+  liked: boolean;
 }
 
 interface PokemonInterface {
@@ -185,7 +185,7 @@ async function fetchRandomChuckNorrisJoke() {
   joke = joke.value;
 
   if (joke.length > 250) {
-    joke = fetchRandomChuckNorrisJoke();
+    joke = await fetchRandomChuckNorrisJoke();
   }
 
   return joke;
@@ -246,25 +246,21 @@ export function Pokemon({
   let location_ = location.replaceAll("-", " ");
   location_ = location_.charAt(0).toUpperCase() + location_.slice(1);
 
+  const createSeenPokemon = (liked: boolean): SeenPokemon => ({
+    name: pokemon.name,
+    height: pokemon.height,
+    weight: pokemon.weight,
+    types: pokemon.types,
+    location: pokemon.location,
+    imageURL: pokemon.imageURL,
+    firstName: firstName || "Unknown",
+    joke: joke,
+    liked: liked,
+  });
+
   const handleLike = async () => {
-    console.log("Liked!", pokemon.name);
-    // Add to seen list with liked = true
-    const newSeenPokemon: SeenPokemon = {
-      name: pokemon.name,
-      height: pokemon.height,
-      weight: pokemon.weight,
-      types: pokemon.types,
-      location: pokemon.location,
-      imageURL: pokemon.imageURL,
-      firstName: firstName || "Unknown",
-      joke: joke,
-      liked: true,
-    };
-
     // Push to array
-    setSeenPokemon([...seenPokemon, newSeenPokemon]);
-
-    console.log("All seen Pokemon:", [...seenPokemon, newSeenPokemon]);
+    setSeenPokemon([...seenPokemon, createSeenPokemon(true)]);
 
     //Load new Pokemon
     loadNewPokemon(
@@ -279,20 +275,9 @@ export function Pokemon({
   };
 
   const handleDislike = () => {
-    console.log("Disliked!", pokemon.name);
-    // Add to seen list with liked = false
-    const newSeenPokemon: SeenPokemon = {
-      name: pokemon.name,
-      firstName: firstName || "Unknown",
-      joke: joke,
-      liked: false,
-    };
-
     // Push to array by creating
-    setSeenPokemon([...seenPokemon, newSeenPokemon]);
+    setSeenPokemon([...seenPokemon, createSeenPokemon(false)]);
 
-    // Log to verify
-    console.log("All seen Pokemon:", [...seenPokemon, newSeenPokemon]);
     // Move to next Pokemon
     loadNewPokemon(
       setPokemon,

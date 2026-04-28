@@ -1,4 +1,4 @@
-import { React, useState } from "react";
+import { useState } from "react";
 
 export type user = {
   username: string;

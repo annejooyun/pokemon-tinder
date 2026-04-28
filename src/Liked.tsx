@@ -36,55 +36,57 @@ export function Liked({ seenPokemon, setCurrentPage }: seenPokemonInterface) {
   let fullName = "";
 
   if (seenPokemon.length === 0) {
-    codeBlock = <h3>No liked pokemon yet.</h3>;
+    codeBlock = <h3>No liked Pokemon yet.</h3>;
   } else {
     const likedPokemon = seenPokemon.filter((item) => item.liked === true);
-    const likedPokemonList = likedPokemon.map((item) => item);
+    if (likedPokemon.length === 0) {
+      codeBlock = <h3>No liked Pokemon yet.</h3>;
+    } else {
+      // Format data for display
+      const pokemonName =
+        likedPokemon[indx].name.charAt(0).toUpperCase() +
+        likedPokemon[indx].name.slice(1);
+      fullName = likedPokemon[indx].firstName + " the " + pokemonName;
+      let location = likedPokemon[indx].location.replaceAll("-", " ");
+      location = location.charAt(0).toUpperCase() + location.slice(1);
 
-    // Format data for display
-    const pokemonName =
-      likedPokemonList[indx].name.charAt(0).toUpperCase() +
-      likedPokemonList[indx].name.slice(1);
-    fullName = likedPokemonList[indx].firstName + " the " + pokemonName;
-    let location = likedPokemon[indx].location.replaceAll("-", " ");
-    location = location.charAt(0).toUpperCase() + location.slice(1);
+      codeBlock = (
+        <>
+          <div className="location-row">
+            <img className="house-image" src="../home.png"></img>
+            <h3>Lives in {location}</h3>
+          </div>
 
-    codeBlock = (
-      <>
-        <div className="location-row">
-          <img className="house-image" src="../home.png"></img>
-          <h3>Lives in {location}</h3>
-        </div>
+          <img className="profile-image" src={likedPokemon[indx].imageURL} />
 
-        <img className="profile-image" src={likedPokemonList[indx].imageURL} />
+          <div className="stats">
+            <h3 className="about-header">About me</h3>
+            <ul className="about-list">
+              <li>Height: {likedPokemon[indx].height} dm</li>
+              <li>Weight: {likedPokemon[indx].weight} hg</li>
+              <li>Type(s): {likedPokemon[indx].types.join(", ")}</li>
+            </ul>
+            <h3 className="quote-header">Quote</h3>
+            <p className="quote"> {likedPokemon[indx].joke} </p>
+          </div>
 
-        <div className="stats">
-          <h3 className="about-header">About me</h3>
-          <ul className="about-list">
-            <li>Height: {likedPokemonList[indx].height} dm</li>
-            <li>Weight: {likedPokemonList[indx].weight} hg</li>
-            <li>Type(s): {likedPokemonList[indx].types.join(", ")}</li>
-          </ul>
-          <h3 className="quote-header">Quote</h3>
-          <p className="quote"> {likedPokemonList[indx].joke} </p>
-        </div>
-
-        <div className="action-buttons">
-          <button
-            className="action-button"
-            onClick={() => setIndx(handleBack(indx, likedPokemonList))}
-          >
-            <img src="../back.png" alt="Previous Pokemon" />
-          </button>
-          <button
-            className="action-button"
-            onClick={() => setIndx(handleNext(indx, likedPokemonList))}
-          >
-            <img src="../next.png" alt="Next Pokemon" />
-          </button>
-        </div>
-      </>
-    );
+          <div className="action-buttons">
+            <button
+              className="action-button"
+              onClick={() => setIndx(handleBack(indx, likedPokemon))}
+            >
+              <img src="../back.png" alt="Previous Pokemon" />
+            </button>
+            <button
+              className="action-button"
+              onClick={() => setIndx(handleNext(indx, likedPokemon))}
+            >
+              <img src="../next.png" alt="Next Pokemon" />
+            </button>
+          </div>
+        </>
+      );
+    }
   }
   return (
     <>

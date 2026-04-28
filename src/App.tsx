@@ -80,23 +80,8 @@ function App() {
 
   // Save new users to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("users", allUsers);
+    localStorage.setItem("users", JSON.stringify(allUsers));
   }, [allUsers]);
-
-  // Save location to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("pokemon-location", location);
-  }, [location]);
-
-  // Save gender to localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("pokemon-gender", gender);
-  }, [gender]);
-
-  // Save type in localStorage whenever it changes
-  useEffect(() => {
-    localStorage.setItem("pokemon-type", pokemonType);
-  }, [pokemonType]);
 
   // Save seen Pokemon whenever it changes
   useEffect(() => {
