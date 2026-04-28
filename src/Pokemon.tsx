@@ -25,7 +25,7 @@ interface PokemonInterface {
   setSeenPokemon: (value: SeenPokemon[]) => void;
 }
 
-export async function fetchAllLocationAreas(): Promise<string[] | null> {
+export async function fetchAllLocations(): Promise<string[] | null> {
   const response = await fetch(
     "https://pokeapi.co/api/v2/location-area/?limit=1000",
   );
@@ -33,8 +33,8 @@ export async function fetchAllLocationAreas(): Promise<string[] | null> {
     console.error(`Error: ${response.status}`);
     return null;
   }
-  const locationsAreas = await response.json();
-  return locationsAreas.results.map((loc: any) => loc.name);
+  const locations = await response.json();
+  return locations.results.map((loc: any) => loc.name);
 }
 
 export async function fetchAllPokemonTypes(): Promise<string[] | null> {
@@ -204,7 +204,7 @@ export function Pokemon({
   const [firstName, setFirstName] = useState<string | null>(null);
   const [joke, setJoke] = useState<string | null>(null);
 
-  // Update pokemon if locationArea, gender or type changes
+  // Update pokemon if location, gender or type changes
   useEffect(() => {
     loadNewPokemon(
       setPokemon,

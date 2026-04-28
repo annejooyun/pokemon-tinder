@@ -35,14 +35,12 @@ function App() {
 
   // Pokemon data
   const [allPokemonTypes, setAllPokemonTypes] = useState<string[] | null>(null);
-  const [allLocationAreas, setAllLocationAreas] = useState<string[] | null>(
-    null,
-  );
+  const [allLocations, setAllLocations] = useState<string[] | null>(null);
   const [seenPokemon, setSeenPokemon] = useState<P.SeenPokemon[]>([]);
 
   // User preferences
-  const [locationArea, setLocationArea] = useLocalStorage(
-    "pokemon-location-area",
+  const [location, setLocation] = useLocalStorage(
+    "pokemon-location",
     "canalave-city-area",
   );
   const [gender, setGender] = useLocalStorage<"male" | "female" | "both">(
@@ -58,8 +56,8 @@ function App() {
   useEffect(() => {
     const load = async () => {
       try {
-        const areas = await P.fetchAllLocationAreas();
-        setAllLocationAreas(areas);
+        const areas = await P.fetchAllLocations();
+        setAllLocations(areas);
       } catch (error) {
         console.error(`Falied to load location areas: ${error}`);
       }
@@ -85,10 +83,10 @@ function App() {
     localStorage.setItem("users", allUsers);
   }, [allUsers]);
 
-  // Save location area to localStorage whenever it changes
+  // Save location to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("pokemon-location-area", locationArea);
-  }, [locationArea]);
+    localStorage.setItem("pokemon-location", location);
+  }, [location]);
 
   // Save gender to localStorage whenever it changes
   useEffect(() => {
@@ -114,7 +112,7 @@ function App() {
       codeBlock = (
         <>
           <P.Pokemon
-            location={locationArea}
+            location={location}
             pokemonType={pokemonType}
             gender={gender}
             error={error}
@@ -135,10 +133,10 @@ function App() {
     case "settings":
       codeBlock = (
         <Settings
-          allLocationAreas={allLocationAreas}
+          allLocations={allLocations}
           allPokemonTypes={allPokemonTypes}
-          locationArea={locationArea}
-          setLocationArea={setLocationArea}
+          location={location}
+          setLocation={setLocation}
           gender={gender}
           setGender={setGender}
           pokemonType={pokemonType}

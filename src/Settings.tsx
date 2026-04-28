@@ -1,10 +1,10 @@
 import { useState } from "react";
 
 interface Settings {
-  allLocationAreas: string[] | null;
+  allLocations: string[] | null;
   allPokemonTypes: string[] | null;
-  locationArea: string;
-  setLocationArea: (value: string) => void;
+  location: string;
+  setLocation: (value: string) => void;
   gender: "male" | "female" | "both";
   setGender: (value: "male" | "female" | "both") => void;
   pokemonType: string | null;
@@ -13,10 +13,10 @@ interface Settings {
 }
 
 export function Settings({
-  allLocationAreas,
+  allLocations,
   allPokemonTypes,
-  locationArea,
-  setLocationArea,
+  location,
+  setLocation,
   gender,
   setGender,
   pokemonType,
@@ -32,8 +32,8 @@ export function Settings({
   const [showPokemonTypeDropdown, setShowPokemonTypeDropdown] = useState(false);
 
   // Filter locations based on search
-  const filteredLocations = allLocationAreas
-    ? allLocationAreas
+  const filteredLocations = allLocations
+    ? allLocations
         .filter((loc) =>
           loc.toLowerCase().includes(locationSearchTerm.toLowerCase()),
         )
@@ -50,7 +50,7 @@ export function Settings({
     : [];
 
   const handleLocationSelect = (location: string) => {
-    setLocationArea(location);
+    setLocation(location);
     setLocationSearchTerm("");
     setShowLocationDropdown(false);
   };
@@ -103,7 +103,7 @@ export function Settings({
                   </div>
                 )}
             </div>
-            <div className="current-text">Current: {locationArea}</div>
+            <div className="current-text">Current: {location}</div>
           </div>
           <div className="gender">
             <label>Gender: </label>
