@@ -11,9 +11,9 @@ User can sign up and log in. Pokemon profiles will be displayed to user, includi
 
 - Disliked Pokemon are saved, but there is no logic to not show previously disliked Pokemon
 
-- Error handling and displaying
-
 - Design of Settings page
+
+- Design of Login page
 
 ## Prerequisites
 
