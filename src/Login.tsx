@@ -1,40 +1,19 @@
 import { useState } from "react";
+import { hashPassword, verifyPassword } from "./auth";
 
 export type user = {
   username: string;
-  password: string;
+  passwordHash: string;
 };
 
-function validateLogin(
-  username: string,
-  password: string,
-  allUsers: user[],
-  setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void,
-  setError: (value: Error | null) => void,
-) {
-  const user = allUsers.find((u) => u.username === username);
-  if (!user) {
-    setError(new Error(`No user with username "${username}"`));
-    return;
-  } else {
-    if (user.password === password) {
-      setCurrentPage("app");
-      return;
-    } else {
-      setError(new Error(`Wrong password`));
-      return;
-    }
-  }
-}
-
-function saveUser(
+async function saveUser(
   username: string,
   password: string,
   setError: (value: Error) => void,
   allUsers: user[],
   setAllUsers: (value: user[]) => void,
   setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void,
-): void {
+): Promise<void> {
   if (username.length === 0 && password.length === 0) {
     setError(new Error("Username and password cannot be empty"));
     return;
@@ -48,9 +27,35 @@ function saveUser(
     return;
   }
 
-  const newUser: user = { username: username, password: password };
+  const passwordHash = await hashPassword(password);
+
+  const newUser: user = { username: username, passwordHash: passwordHash };
   setAllUsers([...allUsers, newUser]);
   setCurrentPage("app");
+}
+
+async function validateLogin(
+  username: string,
+  password: string,
+  allUsers: user[],
+  setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void,
+  setError: (value: Error | null) => void,
+) {
+  const user = allUsers.find((u) => u.username === username);
+
+  if (!user) {
+    setError(new Error(`No user with username "${username}"`));
+    return;
+  }
+
+  // Verify password against stored hash
+  const isValid = await verifyPassword(password, user.passwordHash);
+
+  if (isValid) {
+    setCurrentPage("app");
+  } else {
+    setError(new Error("Wrong password"));
+  }
 }
 
 interface LoginInterface {
@@ -84,8 +89,8 @@ export function Login({
         <button
           className="submit"
           type="submit"
-          onClick={() => {
-            validateLogin(
+          onClick={async () => {
+            await validateLogin(
               username,
               password,
               allUsers,
@@ -107,9 +112,9 @@ export function Login({
       <>
         <button
           className="sign-up"
-          onClick={() => {
+          onClick={async () => {
             setSignUp(false);
-            saveUser(
+            await saveUser(
               username,
               password,
               setError,

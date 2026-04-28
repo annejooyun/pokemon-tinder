@@ -78,6 +78,25 @@ function App() {
     load();
   }, []);
 
+  // Load users from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("users");
+    if (saved) {
+      try {
+        setAllUsers(JSON.parse(saved));
+      } catch (error) {
+        console.error("Failed to load users:", error);
+      }
+    }
+  }, []);
+
+  // Save users to localStorage whenever it changes
+  useEffect(() => {
+    if (allUsers.length > 0) {
+      localStorage.setItem("users", JSON.stringify(allUsers));
+    }
+  }, [allUsers]);
+
   // Save new users to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("users", JSON.stringify(allUsers));

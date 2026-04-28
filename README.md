@@ -5,7 +5,7 @@ User can sign up and log in. Pokemon profiles will be displayed to user, includi
 
 ## WIPs
 
-- Login is not secure, needs improvement
+- Login needs improvement. Liked Pokemon are not saved based on user.
 
 - Joke is not connected to Pokemon type, jokes are random now.
 
