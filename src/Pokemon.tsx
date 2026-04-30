@@ -139,6 +139,7 @@ async function loadNewPokemon(
   location: string,
   pokemonType: string,
   gender: string,
+  seenPokemon: SeenPokemon[],
   setFirstName: (value: string) => void,
   setJoke: (value: string) => void,
   setError: ErrorSetter,
@@ -158,6 +159,26 @@ async function loadNewPokemon(
       minLoadTime,
     ]);
 
+    if (
+      fetchedPokemon &&
+      alreadySeenPokemon(fetchedPokemon.name, fetchedFirstName, seenPokemon)
+    ) {
+      console.log("Already seen");
+      await loadNewPokemon(
+        setPokemon,
+        location,
+        pokemonType,
+        gender,
+        seenPokemon,
+        setFirstName,
+        setJoke,
+        setError,
+        setIsLoading,
+      );
+    } else {
+      console.log("Not seen before");
+    }
+
     setPokemon(fetchedPokemon);
     setFirstName(fetchedFirstName);
     setJoke(fetchedJoke);
@@ -166,6 +187,16 @@ async function loadNewPokemon(
   } finally {
     setIsLoading(false);
   }
+}
+
+function alreadySeenPokemon(
+  pokemonName: string,
+  firstName: string,
+  allSeenPokemon: SeenPokemon[],
+): boolean {
+  return allSeenPokemon.some(
+    (p) => p.firstName === firstName && p.name === pokemonName,
+  );
 }
 
 async function fetchFirstName(
@@ -234,6 +265,7 @@ export function Pokemon({
       location,
       pokemonType,
       gender,
+      seenPokemon,
       setFirstName,
       setJoke,
       setError,
@@ -296,6 +328,7 @@ export function Pokemon({
       location,
       pokemonType,
       gender,
+      seenPokemon,
       setFirstName,
       setJoke,
       setError,
@@ -313,6 +346,7 @@ export function Pokemon({
       location,
       pokemonType,
       gender,
+      seenPokemon,
       setFirstName,
       setJoke,
       setError,
