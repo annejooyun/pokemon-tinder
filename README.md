@@ -5,11 +5,9 @@ User can sign up and log in. Pokemon profiles will be displayed to user, includi
 
 ## WIPs
 
-- Login needs improvement. Liked Pokemon are not saved based on user.
+- Login needs improvement. Liked Pokemon are not saved based on user, but on session.
 
 - Joke is not connected to Pokemon type, jokes are random now.
-
-- Disliked Pokemon are saved, but there is no logic to not show previously disliked Pokemon
 
 - Design of Settings page
 
