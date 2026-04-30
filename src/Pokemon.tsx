@@ -163,7 +163,7 @@ async function loadNewPokemon(
       fetchedPokemon &&
       alreadySeenPokemon(fetchedPokemon.name, fetchedFirstName, seenPokemon)
     ) {
-      console.log("Already seen");
+      // Already seen, load new Pokemon
       await loadNewPokemon(
         setPokemon,
         location,
@@ -175,8 +175,6 @@ async function loadNewPokemon(
         setError,
         setIsLoading,
       );
-    } else {
-      console.log("Not seen before");
     }
 
     setPokemon(fetchedPokemon);
