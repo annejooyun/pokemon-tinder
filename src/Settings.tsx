@@ -7,7 +7,7 @@ interface Settings {
   setLocation: (value: string) => void;
   gender: "male" | "female" | "both";
   setGender: (value: "male" | "female" | "both") => void;
-  pokemonType: string | null;
+  pokemonType: string;
   setPokemonType: (value: string) => void;
   onBack: () => void;
 }
@@ -27,12 +27,20 @@ export function Settings({
   const [locationSearchTerm, setLocationSearchTerm] = useState("");
   const [showLocationDropdown, setShowLocationDropdown] = useState(false);
 
+  // Gender dropdown
+  const [showGenderDropdown, setShowGenderDropdown] = useState(false);
+  const genderOptions: ("male" | "female" | "both")[] = [
+    "male",
+    "female",
+    "both",
+  ];
+
   // Pokemon type dropdown
   const [pokemonTypeSearchTerm, setPokemonTypeSearchTerm] = useState("");
   const [showPokemonTypeDropdown, setShowPokemonTypeDropdown] = useState(false);
 
   // Filter locations based on search
-  const filteredLocations = allLocations
+  let filteredLocations = allLocations
     ? allLocations
         .filter((loc) =>
           loc.toLowerCase().includes(locationSearchTerm.toLowerCase()),
@@ -40,8 +48,13 @@ export function Settings({
         .slice(0, 10) // Limit to 10 results
     : [];
 
+  // Format
+  filteredLocations = filteredLocations.map(
+    (loc) => loc[0].toUpperCase() + loc.slice(1).replaceAll("-", " "),
+  );
+
   // Filter Pokemon types based on search
-  const filteredPokemonTypes = allPokemonTypes
+  let filteredPokemonTypes = allPokemonTypes
     ? allPokemonTypes
         .filter((loc) =>
           loc.toLowerCase().includes(pokemonTypeSearchTerm.toLowerCase()),
@@ -49,10 +62,20 @@ export function Settings({
         .slice(0, 10) // Limit to 10 results
     : [];
 
+  //Format
+  filteredPokemonTypes = filteredPokemonTypes.map(
+    (loc) => loc[0].toUpperCase() + loc.slice(1),
+  );
+
   const handleLocationSelect = (location: string) => {
     setLocation(location);
     setLocationSearchTerm("");
     setShowLocationDropdown(false);
+  };
+
+  const handleGenderSelect = (selectedGender: "male" | "female" | "both") => {
+    setGender(selectedGender);
+    setShowGenderDropdown(false);
   };
 
   const handlePokemonTypeSelect = (type: string) => {
@@ -103,21 +126,54 @@ export function Settings({
                   </div>
                 )}
             </div>
-            <div className="current-text">Current: {location}</div>
-          </div>
-          <div className="gender">
-            <label>Gender: </label>
-            <div>
-              <select
-                value={gender}
-                onChange={(e) => setGender(e.target.value as any)}
-              >
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="both">Both</option>
-              </select>
+
+            <div className="current-text">
+              Current:{" "}
+              {location[0].toUpperCase() +
+                location.slice(1).replaceAll("-", " ")}
             </div>
           </div>
+
+          <div className="gender">
+            <label>Gender: </label>
+            <div style={{ position: "relative" }}>
+              <input
+                type="text"
+                value={gender}
+                onFocus={() => setShowGenderDropdown(true)}
+                onChange={(e) => {
+                  setGender(e.target.value as "male" | "female" | "both");
+                  setShowGenderDropdown(true);
+                }}
+                placeholder="Select gender..."
+                className="settings-input"
+              />
+
+              {showGenderDropdown && (
+                <div className="dropdown">
+                  {genderOptions.map((gender) => (
+                    <div
+                      key={gender}
+                      onClick={() => handleGenderSelect(gender)}
+                      className="dropdown-item"
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#f0f0f0")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "white")
+                      }
+                    >
+                      {gender[0].toUpperCase() + gender.slice(1)}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="current-text">
+              Current: {gender[0].toUpperCase() + gender.slice(1)}
+            </div>
+          </div>
+
           <div className="pokemon-type">
             <label>Pokemon type: </label>
             <div style={{ position: "relative" }}>
@@ -155,7 +211,9 @@ export function Settings({
                   </div>
                 )}
             </div>
-            <div className="current-text">Current: {pokemonType}</div>
+            <div className="current-text">
+              Current: {pokemonType[0].toUpperCase() + pokemonType.slice(1)}
+            </div>
           </div>
         </div>
       </div>
