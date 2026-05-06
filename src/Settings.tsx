@@ -62,7 +62,7 @@ export function Settings({
         .slice(0, 10) // Limit to 10 results
     : [];
 
-  //Format
+  //Format types
   filteredPokemonTypes = filteredPokemonTypes.map(
     (loc) => loc[0].toUpperCase() + loc.slice(1),
   );
@@ -153,7 +153,7 @@ export function Settings({
                 <div className="dropdown">
                   {genderOptions.map((gender) => (
                     <div
-                      key={gender}
+                      key={gender[0].toUpperCase() + gender.slice(1)}
                       onClick={() => handleGenderSelect(gender)}
                       className="dropdown-item"
                       onMouseEnter={(e) =>
