@@ -5,6 +5,7 @@ import * as P from "./Pokemon";
 import { Liked } from "./Liked";
 import { Login } from "./Login";
 import type { user } from "./Login";
+import { Landing } from "./Landing";
 
 // Local storage for user preferences
 function useLocalStorage<T>(
@@ -29,8 +30,8 @@ function App() {
 
   // UI state
   const [currentPage, setCurrentPage] = useState<
-    "app" | "settings" | "liked" | "login"
-  >("login");
+    "app" | "settings" | "liked" | "login" | "landing" | "signup"
+  >("landing");
   const [error, setError] = useState<Error | null>(null);
 
   // Pokemon data
@@ -163,6 +164,8 @@ function App() {
         <Liked seenPokemon={seenPokemon} setCurrentPage={setCurrentPage} />
       );
       break;
+    case "landing":
+      codeBlock = <Landing setCurrentPage={setCurrentPage} />;
   }
 
   return (

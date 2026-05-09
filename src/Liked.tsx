@@ -3,7 +3,9 @@ import type { SeenPokemon } from "./Pokemon";
 
 interface seenPokemonInterface {
   seenPokemon: SeenPokemon[];
-  setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void;
+  setCurrentPage: (
+    value: "app" | "settings" | "liked" | "login" | "landing" | "signup",
+  ) => void;
 }
 
 function handleBack(

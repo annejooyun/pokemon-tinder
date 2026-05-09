@@ -1,67 +1,10 @@
 import { useState } from "react";
-import { hashPassword, verifyPassword } from "./auth";
-
-export type user = {
-  username: string;
-  passwordHash: string;
-};
-
-async function saveUser(
-  username: string,
-  password: string,
-  setError: (value: Error) => void,
-  allUsers: user[],
-  setAllUsers: (value: user[]) => void,
-  setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void,
-): Promise<void> {
-  if (username.length === 0 && password.length === 0) {
-    setError(new Error("Username and password cannot be empty"));
-    return;
-  }
-  if (username.length === 0) {
-    setError(new Error("Username cannot be empty"));
-    return;
-  }
-  if (password.length === 0) {
-    setError(new Error("Password cannot be empty"));
-    return;
-  }
-
-  const passwordHash = await hashPassword(password);
-
-  const newUser: user = { username: username, passwordHash: passwordHash };
-  setAllUsers([...allUsers, newUser]);
-  setCurrentPage("app");
-}
-
-async function validateLogin(
-  username: string,
-  password: string,
-  allUsers: user[],
-  setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void,
-  setError: (value: Error | null) => void,
-) {
-  const user = allUsers.find((u) => u.username === username);
-
-  if (!user) {
-    setError(new Error(`No user with username "${username}"`));
-    return;
-  }
-
-  // Verify password against stored hash
-  const isValid = await verifyPassword(password, user.passwordHash);
-
-  if (isValid) {
-    setCurrentPage("app");
-  } else {
-    setError(new Error("Wrong password"));
-  }
-}
+import * as A from "./auth";
 
 interface LoginInterface {
   setCurrentPage: (value: "app" | "settings" | "liked" | "login") => void;
-  allUsers: user[];
-  setAllUsers: (value: user[]) => void;
+  allUsers: A.user[];
+  setAllUsers: (value: A.user[]) => void;
 }
 
 export function Login({
@@ -90,7 +33,7 @@ export function Login({
           className="submit"
           type="submit"
           onClick={async () => {
-            await validateLogin(
+            await A.validateLogin(
               username,
               password,
               allUsers,
@@ -114,7 +57,7 @@ export function Login({
           className="sign-up"
           onClick={async () => {
             setSignUp(false);
-            await saveUser(
+            await A.saveUser(
               username,
               password,
               setError,
